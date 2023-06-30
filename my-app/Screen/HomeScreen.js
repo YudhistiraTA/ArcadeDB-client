@@ -1,31 +1,19 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Image,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 // Import image
-import arcadeImage from "../assets/image/imagesArcade.png";
+import profileImage from "../assets/image/roblox.jpg";
+import imagesArcade from "../assets/image/imagesArcade.png";
 
 function HomeScreen() {
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBox}>
-          <TextInput style={styles.searchInput} placeholder="Search" />
-          <Ionicons
-            name="search"
-            size={24}
-            color="gray"
-            style={styles.searchIcon}
-          />
-        </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.profileContainer}>
+        <Image source={profileImage} style={styles.profileImage} />
+        <Text style={styles.profileName}>John Doe</Text>
       </View>
+
       <View style={styles.squareContainer}>
         <View style={[styles.columnContainer, { marginHorizontal: 10 }]}>
           <View style={styles.square}></View>
@@ -37,63 +25,35 @@ function HomeScreen() {
         </View>
       </View>
 
-      <ScrollView style={styles.carouselContainer}>
+      <View style={styles.carouselContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
+            <Image source={imagesArcade} style={styles.cardImage} />
             <View style={styles.cardContent}>
               <Text style={styles.cardText}>Card 1</Text>
             </View>
           </View>
           <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
+            <Image source={imagesArcade} style={styles.cardImage} />
             <View style={styles.cardContent}>
               <Text style={styles.cardText}>Card 2</Text>
             </View>
           </View>
           <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
+            <Image source={imagesArcade} style={styles.cardImage} />
             <View style={styles.cardContent}>
               <Text style={styles.cardText}>Card 3</Text>
             </View>
           </View>
           <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
+            <Image source={imagesArcade} style={styles.cardImage} />
             <View style={styles.cardContent}>
               <Text style={styles.cardText}>Card 4</Text>
             </View>
           </View>
         </ScrollView>
-      </ScrollView>
-      <ScrollView style={styles.carouselContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Card 1</Text>
-            </View>
-          </View>
-          <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Card 2</Text>
-            </View>
-          </View>
-          <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Card 3</Text>
-            </View>
-          </View>
-          <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Card 4</Text>
-            </View>
-          </View>
-        </ScrollView>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -103,24 +63,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#FDF3E6",
     padding: 20,
   },
-  searchContainer: {
+  profileContainer: {
+    alignItems: "center",
     marginBottom: 20,
   },
-  searchBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 360,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    elevation: 2,
+  profileImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginBottom: 10,
   },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-  },
-  searchIcon: {
-    marginLeft: 10,
+  profileName: {
+    fontSize: 24,
+    fontWeight: "bold",
   },
   squareContainer: {
     flexDirection: "row",

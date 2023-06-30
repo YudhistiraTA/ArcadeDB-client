@@ -1,12 +1,43 @@
-import React from "react";
-import { View, StyleSheet, Dimensions, ScrollView, Image } from "react-native";
-import MapView from "react-native-maps";
+import React, { useState } from "react";
+import { View, StyleSheet, Dimensions, ScrollView, Image, TextInput, TouchableOpacity } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import MapViewDirections from "react-native-maps-directions";
 
 const { width, height } = Dimensions.get("window");
 
 const ArcadeDetail = () => {
   const initialLatitude = -6.2088;
   const initialLongitude = 106.8456;
+  const [searchText, setSearchText] = useState("");
+  const [destination, setDestination] = useState(null);
+
+  const handleSearch = () => {
+    if (searchText.trim() === "") {
+      console.log("Please enter a valid location");
+      return;
+    }
+
+    // Menggunakan Google Geocoding API untuk mendapatkan koordinat latitude dan longitude
+    const apiKey = "AIzaSyCCaF5BIPEwpDOHTgGtWoGqe0qW_Udm7ms";
+    const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+      searchText
+    )}&key=${apiKey}`;
+
+    fetch(geocodingUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "OK" && data.results.length > 0) {
+          const result = data.results[0];
+          const { lat, lng } = result.geometry.location;
+          setDestination({ latitude: lat, longitude: lng });
+        } else {
+          console.log("Location not found");
+        }
+      })
+      .catch((error) => {
+        console.log("Error retrieving location data:", error);
+      });
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -19,22 +50,45 @@ const ArcadeDetail = () => {
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
           }}
-        />
+        >
+          {destination && (
+            <>
+              <Marker coordinate={destination} />
+              <MapViewDirections
+                origin={{ latitude: initialLatitude, longitude: initialLongitude }}
+                destination={destination}
+                apikey="AIzaSyCCaF5BIPEwpDOHTgGtWoGqe0qW_Udm7ms"
+                strokeWidth={3}
+                strokeColor="blue"
+              />
+            </>
+          )}
+        </MapView>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search Location"
+            onChangeText={setSearchText}
+            value={searchText}
+          />
+          <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+            <Image
+              source={require('../assets/icon/searchIcon.png')}
+              style={styles.searchIcon}
+            />
+          </TouchableOpacity>
+        </View>
         <View style={[styles.card, styles.bigCard]} />
         <View style={styles.smallSquareContainer}>
-          <View style={styles.smallSquareRow}>
-            
-          </View>
+          <View style={styles.smallSquareRow}></View>
           <View style={[styles.smallSquareRow, styles.smallCardRow]}>
             <View style={[styles.smallCard, styles.smallCardMargin]}>
-              {/* Tambahkan komponen Image untuk menampilkan gambar */}
               <Image
                 source={require('../assets/image/imagesArcade.png')} 
                 style={styles.smallCardImage}
               />
             </View>
             <View style={[styles.smallCard, styles.smallCardMargin]}>
-              {/* Tambahkan komponen Image untuk menampilkan gambar */}
               <Image
                 source={require('../assets/image/imagesArcade.png')} 
                 style={styles.smallCardImage}
@@ -72,7 +126,6 @@ const styles = StyleSheet.create({
   },
   smallSquareContainer: {
     width: "100%",
-   
     flexDirection: "column",
     padding: 10,
   },
@@ -80,19 +133,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 10,
-  },
-  smallSquare: {
-    width: 50,
-    height: 50,
-    backgroundColor: "#FDF3E6",
-    justifyContent: "center", // Pusatkan gambar secara vertikal
-    alignItems: "center", // Pusatkan gambar secara horizontal
-  },
-  smallSquareImage: {
-    width: 30,
-    height: 30,
-    resizeMode: "cover",
-    borderRadius: 15,
   },
   smallCardRow: {
     flexDirection: "row",
@@ -107,17 +147,39 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "black",
     borderRadius: 50,
-    justifyContent: "center", // Pusatkan gambar secara vertikal
-    alignItems: "center", // Pusatkan gambar secara horizontal
+    justifyContent: "center",
+    alignItems: "center",
   },
   smallCardImage: {
-    width: 80, // Ubah ukuran width sesuai keinginan Anda
-    height: 80, // Ubah ukuran height sesuai keinginan Anda
+    width: 80,
+    height: 80,
     resizeMode: "cover",
-    borderRadius: 40, // Sesuaikan radius sesuai keinginan Anda
+    borderRadius: 40,
   },
   smallCardMargin: {
     margin: 5,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    backgroundColor: "#F5F5F5",
+    paddingHorizontal: 10,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  searchButton: {
+    padding: 8,
+  },
+  searchIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
   },
 });
 
