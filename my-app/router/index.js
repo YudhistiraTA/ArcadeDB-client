@@ -8,6 +8,9 @@ import LoginScreen from "../Screen/LoginScreen";
 import RegisterScreen from "../Screen/RegisterScreen";
 import ArcadeList from "../Screen/ArcadeList";
 import InboxScreen from "../Screen/InboxScreen";
+import ArcadeDetail from "../Screen/ArcadeDetail";
+import CreateArcade from "../Screen/AddArcade";
+import MessageScreen from "../Screen/MessageScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -23,22 +26,8 @@ function Router() {
           } else if (route.name === "Search") {
             iconName = focused ? "search" : "search-outline";
           } else if (route.name === "Create") {
-            return (
-              <View style={styles.createTabContainer}>
-                <TouchableOpacity
-                  style={styles.createTabButton}
-                  onPress={() => {
-                    // Handle create button press
-                  }}
-                >
-                  <Ionicons
-                    name="add-circle"
-                    size={size + 20}
-                    color={color}
-                  ></Ionicons>
-                </TouchableOpacity>
-              </View>
-            );
+            iconName = "game-controller";
+            
           } else if (route.name === "Bookmark") {
             iconName = focused ? "bookmark" : "bookmark-outline";
           } else if (route.name === "Account") {
@@ -55,43 +44,56 @@ function Router() {
       <Tab.Screen name="Create" component={RegisterScreen} />
       <Tab.Screen name="Bookmark" component={ArcadeList} />
       <Tab.Screen name="Account" component={InboxScreen} />
+      <Tab.Screen name="ArcadeDetail" component={ArcadeDetail} />
+      <Tab.Screen name="createArcade" component={CreateArcade} />
+      <Tab.Screen name="Message" component={MessageScreen} />
     </Tab.Navigator>
   );
 }
 
 function TabBar({ state, descriptors, navigation }) {
+  const centerButtonHandler = () => {
+    navigation.navigate("Create");
+  };
+
   return (
-    <View style={{ flexDirection: "row", backgroundColor: "white" }}>
+    <View style={styles.container}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const { tabBarIcon: TabIcon } = options;
         const isFocused = state.index === index;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
-
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
+        if (route.name === "Create") {
+          return (
+            <TouchableOpacity
+              key={route.key}
+              onPress={centerButtonHandler}
+              style={styles.centerButtonContainer}
+            >
+              <View style={styles.centerButton}>
+                <TabIcon
+                  name={route.name}
+                  focused={isFocused}
+                  size={24}
+                  color="#5A5A5A"
+                />
+              </View>
+            </TouchableOpacity>
+          );
+        }
 
         return (
           <TouchableOpacity
             key={route.key}
-            onPress={onPress}
-            style={{ flex: 1, alignItems: "center", paddingVertical: 8 }}
+            onPress={() => navigation.navigate(route.name)}
+            style={styles.tabContainer}
           >
             {TabIcon && (
               <TabIcon
                 name={route.name}
                 focused={isFocused}
                 size={24}
-                key={route.key}
-                onPress={onPress}
+                color={isFocused ? "black" : "gray"}
               />
             )}
           </TouchableOpacity>
@@ -102,21 +104,40 @@ function TabBar({ state, descriptors, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  createTabContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    top: -50,
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "blue",
+  container: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    height: 60,
+    elevation: 8,
   },
-  createTabButton: {
+  tabContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%", // Add this line to fix the height
+  },
+  centerButtonContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    position: "absolute",
+    top: -30,
+    left: "45%",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#666666",
+    elevation: 8,
+  },
+  centerButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#FDF3E6",
   },
 });
+
 
 export default Router;

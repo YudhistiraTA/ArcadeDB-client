@@ -82,7 +82,7 @@ function RegisterScreen() {
             Register
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Search")}>
           <Text
             style={[
               styles.loginText,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginBottom: 10,
-    color: "#FEF9F4",
+    color: "#FFFFFF",
   },
   inputContainer: {
     flexDirection: "row",
