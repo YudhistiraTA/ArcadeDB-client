@@ -27,10 +27,11 @@ function Router() {
             iconName = focused ? "search" : "search-outline";
           } else if (route.name === "Create") {
             iconName = "game-controller";
-            
           } else if (route.name === "Bookmark") {
             iconName = focused ? "bookmark" : "bookmark-outline";
           } else if (route.name === "Account") {
+            iconName = focused ? "person" : "person-outline";
+          } else if (route.name === "ArcadeDetail") {
             iconName = focused ? "person" : "person-outline";
           }
 
@@ -41,12 +42,9 @@ function Router() {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Search" component={LoginScreen} />
-      <Tab.Screen name="Create" component={RegisterScreen} />
+      <Tab.Screen name="Create" component={CreateArcade} />
       <Tab.Screen name="Bookmark" component={ArcadeList} />
       <Tab.Screen name="Account" component={InboxScreen} />
-      <Tab.Screen name="ArcadeDetail" component={ArcadeDetail} />
-      <Tab.Screen name="createArcade" component={CreateArcade} />
-      <Tab.Screen name="Message" component={MessageScreen} />
     </Tab.Navigator>
   );
 }
@@ -92,7 +90,7 @@ function TabBar({ state, descriptors, navigation }) {
               <TabIcon
                 name={route.name}
                 focused={isFocused}
-                size={24}
+                size={30}
                 color={isFocused ? "black" : "gray"}
               />
             )}
@@ -120,11 +118,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    position: "absolute",
-    top: -30,
-    left: "45%",
-    width: 60,
-    height: 60,
+    top: -40,
+    width: 80,
+    height: 80,
     borderRadius: 30,
     backgroundColor: "#666666",
     elevation: 8,
@@ -138,6 +134,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#FDF3E6",
   },
 });
-
 
 export default Router;

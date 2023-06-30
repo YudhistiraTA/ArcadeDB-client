@@ -8,6 +8,7 @@ import {
   Image,
 } from "react-native";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
+import arcadeImage from "../assets/image/imagesArcade.png";
 import { useFonts } from "expo-font";
 const ArcadeList = () => {
   const [fontsLoaded] = useFonts({
@@ -47,7 +48,15 @@ const ArcadeList = () => {
       <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
         Arcade List
       </Text>
-      <View style={styles.card}></View>
+      {/* <View style={styles.card}></View> */}
+
+      <View style={[styles.card, { marginBottom: 30 }]}>
+        <Image source={arcadeImage} style={styles.cardImage} />
+        <View style={styles.cardContent}>
+          <Text style={styles.cardText}>The Breeze, Taangerang</Text>
+          <Text style={styles.cardText}>☆☆☆☆☆</Text>
+        </View>
+      </View>
     </View>
   );
 };
@@ -101,11 +110,36 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
   },
+  // card: {
+  //   backgroundColor: "white",
+  //   borderRadius: 20,
+  //   height: 250,
+  //   // Tambahkan ukuran kartu dan properti lainnya yang Anda butuhkan
+  // },
   card: {
-    backgroundColor: "white",
-    borderRadius: 20,
-    height: 250,
-    // Tambahkan ukuran kartu dan properti lainnya yang Anda butuhkan
+    width: 300,
+    height: 200,
+    borderRadius: 15,
+    backgroundColor: "#FFFFFF",
+    marginRight: 10,
+    // elevation: 2,
+  },
+  cardImage: {
+    width: "100%",
+    height: "70%",
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+  },
+  cardContent: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  cardText: {
+    marginTop: 10,
+    fontSize: 12,
+    // fontWeight: "bold",
+    color: "#000000",
+    fontFamily: "PressStart2P_400Regular",
   },
 });
 
