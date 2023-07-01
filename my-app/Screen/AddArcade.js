@@ -1,136 +1,161 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useFonts } from "expo-font";
-import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { CheckBox } from "react-native-elements";
 
 const CreateScreen = () => {
-  const [arcadeName, setArcadeName] = useState("");
-  const [fontsLoaded] = useFonts({
-    PressStart2P_400Regular,
-  });
+  const [inputValue, setInputValue] = useState("");
+  const [selectedLogo, setSelectedLogo] = useState("");
+  const [checkboxItems, setCheckboxItems] = useState([false, false, false]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
-
-  const handleChooseLogo = () => {
-    // Implement logic to choose logo
+  const handleInputChange = (text) => {
+    setInputValue(text);
   };
 
-  const handlePickLocation = () => {
-    // Implement logic to pick location
+  const handleLogoChange = (logo) => {
+    setSelectedLogo(logo);
   };
 
-  const handleAddGames = () => {
-    // Implement logic to add games
+  const handleCheck = (index) => {
+    const updatedItems = [...checkboxItems];
+    updatedItems[index] = !updatedItems[index];
+    setCheckboxItems(updatedItems);
   };
 
-  const handlePublish = () => {
-    // Implement logic to publish arcade
+  const handleSubmit = () => {
+    // Implement logic to handle form submission
+    console.log("Form submitted!");
+    console.log("Input Value:", inputValue);
+    console.log("Selected Logo:", selectedLogo);
+    console.log("Checkbox Items:", checkboxItems);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>New Arcade</Text>
-      <View style={styles.inputContainer}>
-        <View style={styles.inputRow}>
-          <Ionicons name="game-controller" size={24} color="gray" style={styles.arcadeLogo} />
-          <Text style={styles.text}>Arcade Name</Text>
-          
+      <Text style={styles.selectLabel}>Pick Location:</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Input Value"
+        value={inputValue}
+        onChangeText={handleInputChange}
+      />
+      <Text style={styles.resultText}>{inputValue}</Text>
+
+      <View style={styles.selectContainer}>
+        <Text style={styles.selectLabel}>Select Logo:</Text>
+        <View style={styles.selectInput}>
+          <TouchableOpacity
+            style={styles.logoOption}
+            onPress={() => handleLogoChange("Logo 1")}
+          >
+            {selectedLogo === "Logo 1" && <View style={styles.logoSelected} />}
+            <Text>Logo 1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.logoOption}
+            onPress={() => handleLogoChange("Logo 2")}
+          >
+            {selectedLogo === "Logo 2" && <View style={styles.logoSelected} />}
+            <Text>Logo 2</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.logoOption}
+            onPress={() => handleLogoChange("Logo 3")}
+          >
+            {selectedLogo === "Logo 3" && <View style={styles.logoSelected} />}
+            <Text>Logo 3</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.separator} />
-        <TouchableOpacity style={styles.chooseLogoButton} onPress={handleChooseLogo}>
-          <Ionicons name="add-circle" size={24} color="gray" />
-          <Text style={styles.buttonText}>Choose Logo</Text>
-          
-        </TouchableOpacity>
-        <View style={styles.separator} />
-        <TouchableOpacity style={styles.locationButton} onPress={handlePickLocation}>
-          <Ionicons name="location" size={24} color="gray" />
-          <Text style={styles.buttonText}>Pick Location</Text>
-        </TouchableOpacity>
-        <View style={styles.separator} />
-        <TouchableOpacity style={styles.addGamesButton} onPress={handleAddGames}>
-          <Ionicons name="game-controller" size={24} color="gray" />
-          <Text style={styles.buttonText}>Add Games</Text>
-        </TouchableOpacity>
-        <View style={styles.separator} />
       </View>
-      <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
-        <Text style={styles.publishButtonText}>PUBLISH</Text>
+
+      <View style={styles.tableContainer}>
+        <Text style={styles.selectLabel}>Add Games:</Text>
+        <View style={styles.tableRow}>
+          <CheckBox checked={checkboxItems[0]} onPress={() => handleCheck(0)} />
+          <Text>Checkbox 1</Text>
+        </View>
+        <View style={styles.tableRow}>
+          <CheckBox checked={checkboxItems[1]} onPress={() => handleCheck(1)} />
+          <Text>Checkbox 2</Text>
+        </View>
+        <View style={styles.tableRow}>
+          <CheckBox checked={checkboxItems[2]} onPress={() => handleCheck(2)} />
+          <Text>Checkbox 3</Text>
+        </View>
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#FDF3E6",
-        paddingHorizontal: 24,
-        paddingTop: 36,
-    },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 16,
-    fontFamily: "PressStart2P_400Regular",
+  container: {
+    flex: 1,
+    backgroundColor: "#FDF3E6",
+    paddingHorizontal: 24,
+    paddingTop: 36,
   },
-  inputContainer: {
+  input: {
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 4,
+    padding: 8,
+  },
+  resultText: {
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  selectContainer: {
     marginBottom: 24,
   },
-  inputRow: {
+  selectLabel: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  selectInput: {
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 4,
+    padding: 8,
+  },
+  logoOption: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 8,
   },
-  arcadeLogo: {
+  logoSelected: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "blue",
     marginRight: 8,
   },
-  text: {
-    fontFamily: "PressStart2P_400Regular",
-    fontSize: 16,
-   
-    marginLeft: 8,
-  },
-  chooseLogoButton: {
-    flexDirection: "row",
-    alignItems: "center",
+  tableContainer: {
     marginBottom: 16,
   },
-  locationButton: {
+  tableRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 8,
   },
-  addGamesButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  buttonText: {
-    marginLeft: 8,
-    fontFamily: "PressStart2P_400Regular",
-  },
-  separator: {
-    borderBottomWidth: 1,
-    borderBottomColor: "gray",
-  },
-  publishButton: {
+  button: {
     backgroundColor: "#64FCD9",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     alignItems: "center",
-    alignSelf: "center",
-   
-},
-
-  publishButtonText: {
+  },
+  buttonText: {
     color: "white",
     fontWeight: "bold",
-    fontFamily: "PressStart2P_400Regular",
   },
 });
 

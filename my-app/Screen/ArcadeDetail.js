@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,14 +7,46 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  Modal,
+  TextInput,
+  Button,
 } from "react-native";
 import MapView from "react-native-maps";
-
+import DatePicker from "react-native-datepicker";
 const { width, height } = Dimensions.get("window");
 
 const ArcadeDetail = () => {
   const initialLatitude = -6.2088;
   const initialLongitude = 106.8456;
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(0);
+
+  const handleBookButton = () => {
+    setModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setModalVisible(false);
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  const handleRateButton = () => {
+    setRatingModalVisible(true);
+  };
+
+  const handleRatingModalClose = () => {
+    setRatingModalVisible(false);
+  };
+
+  const handleRatingSelect = (rating) => {
+    setSelectedRating(rating);
+    setRatingModalVisible(false);
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -36,10 +68,16 @@ const ArcadeDetail = () => {
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.bookButton}>
+            <TouchableOpacity
+              style={styles.bookButton}
+              onPress={handleBookButton}
+            >
               <Text style={styles.buttonText}>Book</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.rateButton}>
+            <TouchableOpacity
+              style={styles.rateButton}
+              onPress={handleRateButton}
+            >
               <Text style={styles.rateButtonText}>Rate</Text>
             </TouchableOpacity>
           </View>
@@ -72,15 +110,73 @@ const ArcadeDetail = () => {
                 style={styles.smallCardImage}
               />
               <Text>Game Name</Text>
+              <TouchableOpacity
+                style={styles.rateButton}
+                onPress={handleRateButton}
+              >
+                <Text style={styles.rateButtonText}>Rate</Text>
+              </TouchableOpacity>
             </View>
             <View style={[styles.smallCard, styles.smallCardMargin]}>
               <Image
                 source={require("../assets/image/imagesArcade.png")}
                 style={styles.smallCardImage}
               />
+              <TouchableOpacity
+                style={styles.rateButton}
+                onPress={handleRateButton}
+              >
+                <Text style={styles.rateButtonText}>Rate</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
+
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={handleModalClose}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>Select Date:</Text>
+              <TextInput
+                keyboardType="numeric"
+                style={styles.input}
+                placeholder="YYYY-MM-DD"
+                value={selectedDate}
+                onChangeText={handleDateChange}
+              />
+              <Button title="Close" onPress={handleModalClose} />
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          visible={ratingModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={handleRatingModalClose}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>Rate this arcade:</Text>
+              <View style={styles.ratingContainer}>
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <TouchableOpacity
+                    key={rating}
+                    style={styles.starButton}
+                    onPress={() => handleRatingSelect(rating)}
+                  >
+                    <Text style={styles.starText}>{rating}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <Button title="Close" onPress={handleRatingModalClose} />
+            </View>
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -89,6 +185,7 @@ const ArcadeDetail = () => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
+    backgroundColor: "#FDF3E6",
   },
   container: {
     flex: 1,
@@ -154,85 +251,109 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "black",
     fontWeight: "bold",
-    fontSize: 12,
+    fontSize: 16,
   },
   userScheduleContainer: {
-    marginTop: 20,
+    marginTop: 10,
   },
   userScheduleText: {
-    marginBottom: 10,
+    fontWeight: "bold",
   },
   circleContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 10,
   },
   circle: {
-    width: 40,
-    height: 40,
-    borderRadius: 100,
+    width: 25,
+    height: 25,
+    borderRadius: 25 / 2,
+    marginRight: -10,
   },
   circle1: {
     position: "absolute",
-    top: -5,
-    left: 0,
+    zIndex: 3,
+    marginLeft: 0,
+    borderWidth: 3,
+    borderColor: "white",
   },
   circle2: {
     position: "absolute",
-    top: -5,
-    left: 15,
+    zIndex: 2,
+    marginLeft: -10,
+    borderWidth: 3,
+    borderColor: "white",
   },
   circle3: {
     position: "absolute",
-    top: -5,
-    left: 30,
+    zIndex: 1,
+    borderWidth: 3,
+    borderColor: "white",
   },
   smallSquareContainer: {
-    width: "100%",
-    flexDirection: "column",
-    padding: 10,
+    width: "90%",
+    height: 150,
+    alignSelf: "center",
   },
   smallSquareRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  smallSquare: {
-    width: 50,
-    height: 50,
-    backgroundColor: "#FDF3E6",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  smallSquareImage: {
-    width: 30,
-    height: 30,
-    resizeMode: "cover",
-    borderRadius: 15,
   },
   smallCardRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     marginBottom: 10,
-    marginTop: -20,
   },
   smallCard: {
-    width: "45%",
-    height: 150,
+    width: "48%",
+    height: "100%",
     backgroundColor: "white",
     borderWidth: 2,
     borderColor: "black",
-    borderRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  smallCardImage: {
-    width: 110,
-    height: 110,
-    resizeMode: "cover",
-    borderRadius: 100,
+    paddingHorizontal: 10,
+    paddingTop: 10,
   },
   smallCardMargin: {
-    margin: 5,
+    marginRight: 0,
+  },
+  smallCardImage: {
+    width: 60,
+    height: 60,
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  modalText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 5,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  starButton: {
+    marginHorizontal: 5,
+  },
+  starText: {
+    fontSize: 24,
   },
 });
 

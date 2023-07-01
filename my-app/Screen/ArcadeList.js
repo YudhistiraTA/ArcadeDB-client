@@ -10,7 +10,13 @@ import {
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import arcadeImage from "../assets/image/imagesArcade.png";
 import { useFonts } from "expo-font";
+import { useNavigation } from "@react-navigation/native";
 const ArcadeList = () => {
+  const navigation = useNavigation();
+  const handleDetail = () => {
+    console.log("first");
+    navigation.navigate("ArcadeDetail", {});
+  };
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
@@ -50,13 +56,15 @@ const ArcadeList = () => {
       </Text>
       {/* <View style={styles.card}></View> */}
 
-      <View style={[styles.card, { marginBottom: 30 }]}>
-        <Image source={arcadeImage} style={styles.cardImage} />
-        <View style={styles.cardContent}>
-          <Text style={styles.cardText}>The Breeze, Taangerang</Text>
-          <Text style={styles.cardText}>☆☆☆☆☆</Text>
+      <TouchableOpacity onPress={() => handleDetail()}>
+        <View style={[styles.card, { marginBottom: 30 }]}>
+          <Image source={arcadeImage} style={styles.cardImage} />
+          <View style={styles.cardContent}>
+            <Text style={styles.cardText}>The Breeze, Taangerang</Text>
+            <Text style={styles.cardText}>☆☆☆☆☆</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
