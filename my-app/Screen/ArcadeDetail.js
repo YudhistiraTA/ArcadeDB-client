@@ -11,7 +11,7 @@ import {
   TextInput,
   Button,
 } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import DatePicker from "react-native-datepicker";
 import { fetchArcadeDetail } from "../Reducer/game";
 import { useDispatch, useSelector } from "react-redux";
@@ -78,7 +78,15 @@ const ArcadeDetail = ({ route }) => {
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
           }}
-        />
+        >
+          <Marker
+            coordinate={{
+              latitude: initialLatitude,
+              longitude: initialLongitude,
+            }}
+            title={arcadesDetail[0]?.name}
+          />
+        </MapView>
         <View style={[styles.card, styles.bigCard]}>
           <View style={styles.headerContainer}>
             <Text style={styles.arcadeName}>{arcadesDetail[0]?.name}</Text>
@@ -132,28 +140,26 @@ const ArcadeDetail = ({ route }) => {
             </View>
           </View>
         </View>
-        <View style={styles.smallSquareContainer}>
-          <View style={[styles.smallSquareRow, styles.smallCardRow]}>
-            {arcadesDetail[0]?.ArcadeGame?.map((arcade) => (
-              <View
-                key={arcade.id}
-                style={[styles.smallCard, styles.smallCardMargin]}
-              >
-                <Image
-                  source={{ uri: arcade.Game.logoUrl }}
-                  style={styles.smallCardImage}
-                />
-                <Text>{arcade.Game.name}</Text>
+        <View style={[styles.smallSquareRow, styles.smallCardRow]}>
+          {arcadesDetail[0]?.ArcadeGame?.map((arcade) => (
+            <View
+              key={arcade.id} // Add unique key prop
+              style={[styles.smallCard, styles.smallCardMargin]}
+            >
+              <Image
+                source={{ uri: arcade.Game.logoUrl }}
+                style={styles.smallCardImage}
+              />
+              <Text>{arcade.Game.name}</Text>
 
-                <TouchableOpacity
-                  style={styles.rateButton}
-                  onPress={handleRateButton}
-                >
-                  <Text style={styles.rateButtonText}>Rate</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
+              <TouchableOpacity
+                style={styles.rateButton}
+                onPress={handleRateButton}
+              >
+                <Text style={styles.rateButtonText}>Rate</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
         </View>
 
         <Modal

@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { saveLoginData } from "../config/storage";
 
 export const fetchGame = createAsyncThunk("games/fetchGame", async () => {
   try {
     const response = await axios.get(
-      "https://db14-111-68-121-186.ngrok-free.app/games"
+      "https://4a8c-180-242-130-229.ngrok-free.app/games"
     );
 
     return response.data;
@@ -18,9 +19,9 @@ export const fetchArcadeDetail = createAsyncThunk(
   async (id) => {
     try {
       const response = await axios.get(
-        `https://db14-111-68-121-186.ngrok-free.app/detail/${id}`
+        `https://4a8c-180-242-130-229.ngrok-free.app/detail/${id}`
       );
-      console.log(response.data, "asdasdasd");
+
       return response.data;
     } catch (error) {
       console.error(error);
@@ -32,7 +33,7 @@ export const fetchArcadeDetail = createAsyncThunk(
 export const fetchArcade = createAsyncThunk("games/fetchArcade", async () => {
   try {
     const response = await axios.get(
-      "https://db14-111-68-121-186.ngrok-free.app/main?lat=-6.3053252&lng=106.6435346"
+      "https://4a8c-180-242-130-229.ngrok-free.app/main?lat=-6.3053252&lng=106.6435346"
     );
 
     return response.data;
@@ -44,7 +45,7 @@ export const fetchArcade = createAsyncThunk("games/fetchArcade", async () => {
 export const fetchBrand = createAsyncThunk("games/fetchBrand", async () => {
   try {
     const response = await axios.get(
-      "https://db14-111-68-121-186.ngrok-free.app/brands"
+      "https://4a8c-180-242-130-229.ngrok-free.app/brands"
     );
 
     return response.data;
@@ -54,6 +55,37 @@ export const fetchBrand = createAsyncThunk("games/fetchBrand", async () => {
   }
 });
 
+export const fetchLogin = createAsyncThunk(
+  "games/fetchLogin",
+  async (credentials) => {
+    try {
+      const response = await axios.post(
+        `https://4a8c-180-242-130-229.ngrok-free.app/users/login`,
+        credentials
+      );
+
+      const { token } = response.data;
+
+      await saveLoginData({ token });
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
+// const loginSlice = createSlice({
+//   name: "games",
+//   initialState: [],
+//   reducers: {},
+//   extraReducers: (builder) => {
+//     builder.addCase(fetchGame.fulfilled, (state, action) => {
+//       return [...state, action.payload];
+//     });
+//   },
+// });
 const gameSlice = createSlice({
   name: "games",
   initialState: [],
