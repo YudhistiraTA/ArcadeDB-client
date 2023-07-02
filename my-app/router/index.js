@@ -2,6 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import HomeScreen from "../Screen/HomeScreen";
 import LoginScreen from "../Screen/LoginScreen";
@@ -11,7 +12,12 @@ import InboxScreen from "../Screen/InboxScreen";
 import ArcadeDetail from "../Screen/ArcadeDetail";
 import CreateArcade from "../Screen/AddArcade";
 import MessageScreen from "../Screen/MessageScreen";
-
+import EditProfileScreen from "../Screen/ProfileScreen";
+import BookmarkList from "../Screen/BookmarkScreen";
+import GameList from "../Screen/GameScreen";
+import FollowerList from "../Screen/FollowerScreen";
+import Test from "../Screen/test";
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function Router() {
@@ -40,15 +46,27 @@ function Router() {
       })}
       tabBar={(props) => <TabBar {...props} />}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Search" component={LoginScreen} />
+      <Tab.Screen name="Home" component={MainStack} />
+      <Tab.Screen name="Search" component={ArcadeList} />
       <Tab.Screen name="Create" component={CreateArcade} />
-      <Tab.Screen name="Bookmark" component={ArcadeList} />
-      <Tab.Screen name="Account" component={InboxScreen} />
+      <Tab.Screen name="Bookmark" component={BookmarkList} />
+      <Tab.Screen name="Account" component={EditProfileScreen} />
     </Tab.Navigator>
   );
 }
-
+export function MainStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Dashboard" component={HomeScreen} />
+      <Stack.Screen name="Inbox" component={InboxScreen} />
+      <Stack.Screen name="Message" component={MessageScreen} />
+      <Stack.Screen name="ArcadeDetail" component={ArcadeDetail} />
+      <Stack.Screen name="Profile" component={EditProfileScreen} />
+      <Stack.Screen name="GameList" component={GameList} />
+      <Stack.Screen name="Followers" component={FollowerList} />
+    </Stack.Navigator>
+  );
+}
 function TabBar({ state, descriptors, navigation }) {
   const centerButtonHandler = () => {
     navigation.navigate("Create");

@@ -1,136 +1,166 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useFonts } from "expo-font";
-import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { CheckBox } from "react-native-elements";
+import { ScrollView } from "react-native-gesture-handler";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchGame, fetchArcade, fetchBrand } from "../Reducer/game";
 
 const CreateScreen = () => {
-  const [arcadeName, setArcadeName] = useState("");
-  const [fontsLoaded] = useFonts({
-    PressStart2P_400Regular,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
-  const handleChooseLogo = () => {
-    // Implement logic to choose logo
+  const [inputValue, setInputValue] = useState("");
+  const [selectedLogo, setSelectedLogo] = useState("");
+  const [checkboxItems, setCheckboxItems] = useState([false, false, false]);
+  const games = useSelector((state) => state.games);
+  const brands = useSelector((state) => state.brands);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const handleFetchGame = async () => {
+      await dispatch(fetchGame());
+    };
+    handleFetchGame();
+    const handleFetchBrand = async () => {
+      await dispatch(fetchBrand());
+    };
+    handleFetchBrand();
+  }, []);
+  const handleInputChange = (text) => {
+    setInputValue(text);
   };
 
-  const handlePickLocation = () => {
-    // Implement logic to pick location
+  const handleLogoChange = (logo) => {
+    setSelectedLogo(logo);
   };
 
-  const handleAddGames = () => {
-    // Implement logic to add games
+  const handleCheck = (index) => {
+    const updatedItems = [...checkboxItems];
+    updatedItems[index] = !updatedItems[index];
+    setCheckboxItems(updatedItems);
   };
 
-  const handlePublish = () => {
-    // Implement logic to publish arcade
+  const handleSubmit = () => {
+    // Implement logic to handle form submission
+    console.log("Form submitted!");
+    console.log("Input Value:", inputValue);
+    console.log("Selected Logo:", selectedLogo);
+    console.log("Checkbox Items:", checkboxItems);
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>New Arcade</Text>
-      <View style={styles.inputContainer}>
-        <View style={styles.inputRow}>
-          <Ionicons name="game-controller" size={24} color="gray" style={styles.arcadeLogo} />
-          <Text style={styles.text}>Arcade Name</Text>
-          
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.selectLabel}>Pick Location:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Input Value"
+          value={inputValue}
+          onChangeText={handleInputChange}
+        />
+        <Text style={styles.resultText}>{inputValue}</Text>
+
+        <View style={styles.selectContainer}>
+          <Text style={styles.selectLabel}>Select Logo:</Text>
+          <View style={styles.selectInput}>
+            {brands[0]?.map((brand) => (
+              <TouchableOpacity
+                style={styles.logoOption}
+                onPress={() => handleLogoChange(brand.name)}
+                key={brand.id}
+              >
+                {selectedLogo === brand.name && (
+                  <View style={styles.logoSelected} />
+                )}
+                <Text>{brand.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-        <View style={styles.separator} />
-        <TouchableOpacity style={styles.chooseLogoButton} onPress={handleChooseLogo}>
-          <Ionicons name="add-circle" size={24} color="gray" />
-          <Text style={styles.buttonText}>Choose Logo</Text>
-          
+
+        <View style={styles.tableContainer}>
+          <Text style={styles.selectLabel}>Add Games:</Text>
+          {games[0]?.map((game, index) => (
+            <View style={styles.tableRow} key={index}>
+              <CheckBox
+                checked={checkboxItems[index]}
+                onPress={() => handleCheck(index)}
+              />
+              <Text>{game.name}</Text>
+            </View>
+          ))}
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
-        <View style={styles.separator} />
-        <TouchableOpacity style={styles.locationButton} onPress={handlePickLocation}>
-          <Ionicons name="location" size={24} color="gray" />
-          <Text style={styles.buttonText}>Pick Location</Text>
-        </TouchableOpacity>
-        <View style={styles.separator} />
-        <TouchableOpacity style={styles.addGamesButton} onPress={handleAddGames}>
-          <Ionicons name="game-controller" size={24} color="gray" />
-          <Text style={styles.buttonText}>Add Games</Text>
-        </TouchableOpacity>
-        <View style={styles.separator} />
       </View>
-      <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
-        <Text style={styles.publishButtonText}>PUBLISH</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#FDF3E6",
-        paddingHorizontal: 24,
-        paddingTop: 36,
-    },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 16,
-    fontFamily: "PressStart2P_400Regular",
+  container: {
+    flex: 1,
+    backgroundColor: "#FDF3E6",
+    paddingHorizontal: 24,
+    paddingTop: 36,
   },
-  inputContainer: {
+  input: {
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 4,
+    padding: 8,
+  },
+  resultText: {
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  selectContainer: {
     marginBottom: 24,
   },
-  inputRow: {
+  selectLabel: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  selectInput: {
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 4,
+    padding: 8,
+  },
+  logoOption: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 8,
   },
-  arcadeLogo: {
+  logoSelected: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "blue",
     marginRight: 8,
   },
-  text: {
-    fontFamily: "PressStart2P_400Regular",
-    fontSize: 16,
-   
-    marginLeft: 8,
-  },
-  chooseLogoButton: {
-    flexDirection: "row",
-    alignItems: "center",
+  tableContainer: {
     marginBottom: 16,
   },
-  locationButton: {
+  tableRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 8,
   },
-  addGamesButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  buttonText: {
-    marginLeft: 8,
-    fontFamily: "PressStart2P_400Regular",
-  },
-  separator: {
-    borderBottomWidth: 1,
-    borderBottomColor: "gray",
-  },
-  publishButton: {
+  button: {
     backgroundColor: "#64FCD9",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     alignItems: "center",
-    alignSelf: "center",
-   
-},
-
-  publishButtonText: {
+  },
+  buttonText: {
     color: "white",
     fontWeight: "bold",
-    fontFamily: "PressStart2P_400Regular",
   },
 });
 

@@ -8,17 +8,22 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 // Import image
 import arcadeImage from "../assets/image/imagesArcade.png";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 function HomeScreen() {
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
-
+  const navigation = useNavigation();
+  const handlePage = (page) => {
+    navigation.navigate(page);
+  };
   if (!fontsLoaded) {
     return null;
   }
@@ -37,22 +42,30 @@ function HomeScreen() {
       </View>
       <View style={styles.squareContainer}>
         <View style={[styles.columnContainer, { marginHorizontal: 10 }]}>
-          <View style={styles.square}>
-            <View
-              style={[styles.iconContainer, { backgroundColor: "#E4B84C" }]}
-            >
-              <Ionicons name="game-controller" size={24} color="#FFFFFF" />
+          <TouchableOpacity onPress={() => handlePage("GameList")}>
+            <View style={styles.square}>
+              <View
+                style={[styles.iconContainer, { backgroundColor: "#E4B84C" }]}
+              >
+                <Ionicons name="game-controller" size={24} color="#FFFFFF" />
+              </View>
+              <Text style={styles.squareText}>Games</Text>
             </View>
-            <Text style={styles.squareText}>Games</Text>
-          </View>
-          <View style={styles.square}>
-            <View
-              style={[styles.iconContainer, { backgroundColor: "#EBB3C3" }]}
-            >
-              <Ionicons name="chatbubbles-outline" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handlePage("Inbox")}>
+            <View style={styles.square}>
+              <View
+                style={[styles.iconContainer, { backgroundColor: "#EBB3C3" }]}
+              >
+                <Ionicons
+                  name="chatbubbles-outline"
+                  size={24}
+                  color="#FFFFFF"
+                />
+              </View>
+              <Text style={styles.squareText}>Messages</Text>
             </View>
-            <Text style={styles.squareText}>Messages</Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={[styles.columnContainer, { marginHorizontal: 10 }]}>
           <View style={styles.square}>
@@ -63,14 +76,16 @@ function HomeScreen() {
             </View>
             <Text style={styles.squareText}>Arcades</Text>
           </View>
-          <View style={styles.square}>
-            <View
-              style={[styles.iconContainer, { backgroundColor: "#81ADB4" }]}
-            >
-              <Ionicons name="people-outline" size={24} color="#FFFFFF" />
+          <TouchableOpacity onPress={() => handlePage("Followers")}>
+            <View style={styles.square}>
+              <View
+                style={[styles.iconContainer, { backgroundColor: "#81ADB4" }]}
+              >
+                <Ionicons name="people-outline" size={24} color="#FFFFFF" />
+              </View>
+              <Text style={styles.squareText}>Followers</Text>
             </View>
-            <Text style={styles.squareText}>Followers</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
       <Text style={{ fontFamily: "PressStart2P_400Regular", marginBottom: 10 }}>
@@ -78,13 +93,15 @@ function HomeScreen() {
       </Text>
       <ScrollView>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>The Breeze, Taangerang</Text>
-              <Text style={styles.cardText}>☆☆☆☆☆</Text>
+          <TouchableOpacity onPress={() => handlePage("ArcadeDetail")}>
+            <View style={[styles.card, { marginBottom: 30 }]}>
+              <Image source={arcadeImage} style={styles.cardImage} />
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>The Breeze, Taangerang</Text>
+                <Text style={styles.cardText}>☆☆☆☆☆</Text>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
           <View style={[styles.card, { marginBottom: 30 }]}>
             <Image source={arcadeImage} style={styles.cardImage} />
             <View style={styles.cardContent}>

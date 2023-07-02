@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -10,7 +10,32 @@ import {
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import arcadeImage from "../assets/image/imagesArcade.png";
 import { useFonts } from "expo-font";
+import { useNavigation } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchArcade } from "../Reducer/game";
 const ArcadeList = () => {
+  const arcades = useSelector((state) => state.arcades);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const handleFetchArcade = async () => {
+      await dispatch(fetchArcade());
+    };
+    handleFetchArcade();
+  }, []);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigation = useNavigation();
+
+  const handleDetail = (id) => {
+    console.log("first");
+    navigation.navigate(`ArcadeDetail`, { id });
+  };
+  const handleSearch = () => {
+    // Perform search action
+    console.log("Search query:", searchQuery);
+  };
+
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
@@ -18,6 +43,7 @@ const ArcadeList = () => {
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -27,13 +53,15 @@ const ArcadeList = () => {
             { fontFamily: "PressStart2P_400Regular" },
           ]}
           placeholder="Search Arcade Location..."
+          value={searchQuery}
+          onChangeText={(text) => setSearchQuery(text)}
         />
-        <View style={styles.searchIcon}>
+        <TouchableOpacity style={styles.searchIcon} onPress={handleSearch}>
           <Image
             source={require("../assets/icon/searchIcon.png")}
             style={styles.iconImage}
           />
-        </View>
+        </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.globalSearchButton}>
         <Text
@@ -45,18 +73,31 @@ const ArcadeList = () => {
           Global Search
         </Text>
       </TouchableOpacity>
-      <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
-        Arcade List
-      </Text>
-      {/* <View style={styles.card}></View> */}
 
-      <View style={[styles.card, { marginBottom: 30 }]}>
-        <Image source={arcadeImage} style={styles.cardImage} />
-        <View style={styles.cardContent}>
-          <Text style={styles.cardText}>The Breeze, Taangerang</Text>
-          <Text style={styles.cardText}>☆☆☆☆☆</Text>
-        </View>
-      </View>
+      {arcades[0]?.map((arcade) => (
+        <TouchableOpacity
+          onPress={() => handleDetail(arcade.id)}
+          key={arcade.id}
+        >
+          <View style={[styles.card, { marginBottom: 30 }]}>
+            <Image
+              source={{ uri: arcade.Brand.imageUrl }}
+              style={styles.cardImage}
+            />
+            <View style={styles.cardContent}>
+              <Text style={styles.cardText}>{arcade.name}</Text>
+              <Text style={styles.cardText}>
+                {arcade.rating === 0 || arcade.rating === 100 ? "★★★★★" : null}
+
+                {arcade.rating === 80 && "★★★★☆"}
+                {arcade.rating === 60 && "★★★☆☆"}
+                {arcade.rating === 40 && "★★☆☆☆"}
+                {arcade.rating === 20 && "★☆☆☆☆"}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };
