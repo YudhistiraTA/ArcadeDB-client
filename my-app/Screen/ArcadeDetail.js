@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -13,9 +13,28 @@ import {
 } from "react-native";
 import MapView from "react-native-maps";
 import DatePicker from "react-native-datepicker";
+import { fetchArcadeDetail } from "../Reducer/game";
+import { useDispatch, useSelector } from "react-redux";
 const { width, height } = Dimensions.get("window");
 
-const ArcadeDetail = () => {
+const ArcadeDetail = ({ route }) => {
+  const { id } = route.params;
+
+  const arcadesDetail = useSelector((state) => state.arcadesDetail);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const handleArcadeDetail = async (id) => {
+      await dispatch(fetchArcadeDetail(id));
+    };
+    handleArcadeDetail(id);
+    // const handleFetchGame = async () => {
+    //   await dispatch(fetchGame());
+    // };
+    // handleFetchGame();
+  }, []);
+
   const initialLatitude = -6.2088;
   const initialLongitude = 106.8456;
   const [modalVisible, setModalVisible] = useState(false);
@@ -50,7 +69,7 @@ const ArcadeDetail = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
+      <View style={styles.container} key={arcadesDetail[0]?.id}>
         <MapView
           style={styles.map}
           initialRegion={{
@@ -62,9 +81,20 @@ const ArcadeDetail = () => {
         />
         <View style={[styles.card, styles.bigCard]}>
           <View style={styles.headerContainer}>
-            <Text style={styles.arcadeName}>Arcade Name</Text>
+            <Text style={styles.arcadeName}>{arcadesDetail[0]?.name}</Text>
+
             <View style={styles.rateContainer}>
-              <Text style={styles.rateText}>100 ☆☆☆☆☆</Text>
+              <Text style={styles.rateText}>
+                {arcadesDetail[0]?.rating === 0 ||
+                arcadesDetail[0]?.rating === 100
+                  ? "★★★★★"
+                  : null}
+
+                {arcadesDetail[0]?.rating === 80 && "★★★★☆"}
+                {arcadesDetail[0]?.rating === 60 && "★★★☆☆"}
+                {arcadesDetail[0]?.rating === 40 && "★★☆☆☆"}
+                {arcadesDetail[0]?.rating === 20 && "★☆☆☆☆"}
+              </Text>
             </View>
           </View>
           <View style={styles.buttonContainer}>
@@ -104,31 +134,25 @@ const ArcadeDetail = () => {
         </View>
         <View style={styles.smallSquareContainer}>
           <View style={[styles.smallSquareRow, styles.smallCardRow]}>
-            <View style={[styles.smallCard, styles.smallCardMargin]}>
-              <Image
-                source={require("../assets/image/imagesArcade.png")}
-                style={styles.smallCardImage}
-              />
-              <Text>Game Name</Text>
-              <TouchableOpacity
-                style={styles.rateButton}
-                onPress={handleRateButton}
+            {arcadesDetail[0]?.ArcadeGame?.map((arcade) => (
+              <View
+                key={arcade.id}
+                style={[styles.smallCard, styles.smallCardMargin]}
               >
-                <Text style={styles.rateButtonText}>Rate</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={[styles.smallCard, styles.smallCardMargin]}>
-              <Image
-                source={require("../assets/image/imagesArcade.png")}
-                style={styles.smallCardImage}
-              />
-              <TouchableOpacity
-                style={styles.rateButton}
-                onPress={handleRateButton}
-              >
-                <Text style={styles.rateButtonText}>Rate</Text>
-              </TouchableOpacity>
-            </View>
+                <Image
+                  source={{ uri: arcade.Game.logoUrl }}
+                  style={styles.smallCardImage}
+                />
+                <Text>{arcade.Game.name}</Text>
+
+                <TouchableOpacity
+                  style={styles.rateButton}
+                  onPress={handleRateButton}
+                >
+                  <Text style={styles.rateButtonText}>Rate</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
           </View>
         </View>
 

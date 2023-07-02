@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -10,8 +10,21 @@ import {
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import arcadeImage from "../assets/image/imagesArcade.png";
 import { useFonts } from "expo-font";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchGame, fetchArcade } from "../Reducer/game";
+import { ScrollView } from "react-native-gesture-handler";
 
 const GameList = () => {
+  const games = useSelector((state) => state.games);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const handleFetchGame = async () => {
+      await dispatch(fetchGame());
+    };
+    handleFetchGame();
+  }, []);
+
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
@@ -21,18 +34,22 @@ const GameList = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
-        Game List
-      </Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
+          Game List
+        </Text>
 
-      <View style={[styles.card, { marginBottom: 30 }]}>
-        <Image source={arcadeImage} style={styles.cardImage} />
-        <View style={styles.cardContent}>
-          <Text style={styles.cardText}>The Breeze, Taangerang</Text>
-        </View>
+        {games[0]?.map((game) => (
+          <View style={[styles.card, { marginBottom: 30 }]} key={game.id}>
+            <Image source={{ uri: game.logoUrl }} style={styles.cardImage} />
+            <View style={styles.cardContent}>
+              <Text style={styles.cardText}>{game.name}</Text>
+            </View>
+          </View>
+        ))}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

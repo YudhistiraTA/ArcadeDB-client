@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -7,12 +7,27 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { CheckBox } from "react-native-elements";
+import { ScrollView } from "react-native-gesture-handler";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchGame, fetchArcade, fetchBrand } from "../Reducer/game";
 
 const CreateScreen = () => {
   const [inputValue, setInputValue] = useState("");
   const [selectedLogo, setSelectedLogo] = useState("");
   const [checkboxItems, setCheckboxItems] = useState([false, false, false]);
-
+  const games = useSelector((state) => state.games);
+  const brands = useSelector((state) => state.brands);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const handleFetchGame = async () => {
+      await dispatch(fetchGame());
+    };
+    handleFetchGame();
+    const handleFetchBrand = async () => {
+      await dispatch(fetchBrand());
+    };
+    handleFetchBrand();
+  }, []);
   const handleInputChange = (text) => {
     setInputValue(text);
   };
@@ -36,63 +51,53 @@ const CreateScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.selectLabel}>Pick Location:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Input Value"
-        value={inputValue}
-        onChangeText={handleInputChange}
-      />
-      <Text style={styles.resultText}>{inputValue}</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.selectLabel}>Pick Location:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Input Value"
+          value={inputValue}
+          onChangeText={handleInputChange}
+        />
+        <Text style={styles.resultText}>{inputValue}</Text>
 
-      <View style={styles.selectContainer}>
-        <Text style={styles.selectLabel}>Select Logo:</Text>
-        <View style={styles.selectInput}>
-          <TouchableOpacity
-            style={styles.logoOption}
-            onPress={() => handleLogoChange("Logo 1")}
-          >
-            {selectedLogo === "Logo 1" && <View style={styles.logoSelected} />}
-            <Text>Logo 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.logoOption}
-            onPress={() => handleLogoChange("Logo 2")}
-          >
-            {selectedLogo === "Logo 2" && <View style={styles.logoSelected} />}
-            <Text>Logo 2</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.logoOption}
-            onPress={() => handleLogoChange("Logo 3")}
-          >
-            {selectedLogo === "Logo 3" && <View style={styles.logoSelected} />}
-            <Text>Logo 3</Text>
-          </TouchableOpacity>
+        <View style={styles.selectContainer}>
+          <Text style={styles.selectLabel}>Select Logo:</Text>
+          <View style={styles.selectInput}>
+            {brands[0]?.map((brand) => (
+              <TouchableOpacity
+                style={styles.logoOption}
+                onPress={() => handleLogoChange(brand.name)}
+                key={brand.id}
+              >
+                {selectedLogo === brand.name && (
+                  <View style={styles.logoSelected} />
+                )}
+                <Text>{brand.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
+
+        <View style={styles.tableContainer}>
+          <Text style={styles.selectLabel}>Add Games:</Text>
+          {games[0]?.map((game, index) => (
+            <View style={styles.tableRow} key={index}>
+              <CheckBox
+                checked={checkboxItems[index]}
+                onPress={() => handleCheck(index)}
+              />
+              <Text>{game.name}</Text>
+            </View>
+          ))}
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </TouchableOpacity>
       </View>
-
-      <View style={styles.tableContainer}>
-        <Text style={styles.selectLabel}>Add Games:</Text>
-        <View style={styles.tableRow}>
-          <CheckBox checked={checkboxItems[0]} onPress={() => handleCheck(0)} />
-          <Text>Checkbox 1</Text>
-        </View>
-        <View style={styles.tableRow}>
-          <CheckBox checked={checkboxItems[1]} onPress={() => handleCheck(1)} />
-          <Text>Checkbox 2</Text>
-        </View>
-        <View style={styles.tableRow}>
-          <CheckBox checked={checkboxItems[2]} onPress={() => handleCheck(2)} />
-          <Text>Checkbox 3</Text>
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 

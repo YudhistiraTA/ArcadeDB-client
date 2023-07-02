@@ -16,6 +16,7 @@ import EditProfileScreen from "../Screen/ProfileScreen";
 import BookmarkList from "../Screen/BookmarkScreen";
 import GameList from "../Screen/GameScreen";
 import FollowerList from "../Screen/FollowerScreen";
+import Test from "../Screen/test";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
