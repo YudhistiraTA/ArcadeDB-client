@@ -17,6 +17,7 @@ import BookmarkList from "../Screen/BookmarkScreen";
 import GameList from "../Screen/GameScreen";
 import FollowerList from "../Screen/FollowerScreen";
 import Test from "../Screen/test";
+import MapCoba from "../Screen/autocomplete";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -46,7 +47,7 @@ function Router() {
       })}
       tabBar={(props) => <TabBar {...props} />}
     >
-      <Tab.Screen name="Home" component={MainStack} />
+      <Tab.Screen name="Home" component={MapCoba} />
       <Tab.Screen name="Search" component={ArcadeList} />
       <Tab.Screen name="Create" component={CreateArcade} />
       <Tab.Screen name="Bookmark" component={BookmarkList} />
