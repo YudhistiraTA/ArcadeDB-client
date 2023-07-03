@@ -18,6 +18,7 @@ import arcadeImage from "../assets/image/imagesArcade.png";
 import userImage from "../assets/image/user3.png";
 import bannerImage from "../assets/image/imagesArcade.png"; // Import the banner image
 import * as Location from "expo-location";
+import { BASE_URL } from "../config/api";
 function HomeScreen() {
   const [userLocation, setUserLocation] = React.useState({});
   const [recommendations, setRecommendations] = React.useState([]);
@@ -40,8 +41,8 @@ function HomeScreen() {
     const handleRecommendation = async () => {
       try {
         const { data } = await axios.get(
-          // `https://7878-27-50-29-117.ngrok-free.app/main?lat=${userLocation.userLat}&lng=${userLocation.userLong}`
-          `https://7878-27-50-29-117.ngrok-free.app/arcades`
+          // `${BASE_URL}/main?lat=${userLocation.userLat}&lng=${userLocation.userLong}`
+          `${BASE_URL}/arcades`
         );
         // console.log(data);
         setRecommendations(data);

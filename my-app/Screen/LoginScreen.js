@@ -13,7 +13,7 @@ import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { BASE_URL } from "../config/api";
 function LoginScreen() {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
@@ -25,13 +25,10 @@ function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(
-        `https://768a-61-5-18-53.ngrok-free.app/users/login`,
-        {
-          email: email,
-          password: password,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/users/login`, {
+        email: email,
+        password: password,
+      });
       const token = response.data.token;
 
       // Simpan token ke AsyncStorage

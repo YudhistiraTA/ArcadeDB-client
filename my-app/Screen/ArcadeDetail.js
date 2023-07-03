@@ -15,6 +15,9 @@ import MapView, { Marker } from "react-native-maps";
 import DatePicker from "react-native-datepicker";
 import { fetchArcade, fetchArcadeDetail } from "../Reducer/game";
 import { useDispatch, useSelector } from "react-redux";
+import { BASE_URL } from "../config/api";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const { width, height } = Dimensions.get("window");
 
 const ArcadeDetail = ({ route }) => {
@@ -64,8 +67,32 @@ const ArcadeDetail = ({ route }) => {
     setRatingModalVisible(false);
   };
 
-  const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
+  const addBookmark = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+
+      if (token) {
+        const config = {
+          headers: {
+            token: token,
+          },
+        };
+
+        const response = await axios.post(
+          `${BASE_URL}/bookmarks/${id}`,
+          null,
+          config
+        );
+        // Handle the response, update the bookmark state, or perform any other necessary actions
+        console.log("Bookmark added successfully");
+      } else {
+        // Handle the case when the token is not available in AsyncStorage
+        console.log("Token not found");
+      }
+    } catch (error) {
+      // Handle any errors that occur during the bookmark addition
+      console.log("Error adding bookmark", error);
+    }
   };
 
   return (
@@ -114,7 +141,7 @@ const ArcadeDetail = ({ route }) => {
               <Text style={styles.buttonText}>Book</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={handleBookmark}
+              onPress={addBookmark}
               style={
                 isBookmarked
                   ? styles.bookmarkButtonActive
@@ -129,6 +156,7 @@ const ArcadeDetail = ({ route }) => {
                 {isBookmarked ? "Bookmarked" : "Bookmark"}
               </Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={[styles.rateButton, { marginRight: 10 }]}
               onPress={handleRateButton}

@@ -66,11 +66,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   card: {
-    width: 300,
+    flex: 1, // Occupy full width
     height: 200,
     borderRadius: 15,
     backgroundColor: "#FFFFFF",
-    marginRight: 10,
+    marginBottom: 30,
   },
   cardImage: {
     width: "100%",
