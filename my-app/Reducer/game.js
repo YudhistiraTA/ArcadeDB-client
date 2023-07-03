@@ -5,7 +5,7 @@ import { saveLoginData } from "../config/storage";
 export const fetchGame = createAsyncThunk("games/fetchGame", async () => {
   try {
     const response = await axios.get(
-      "https://1d45-27-50-29-117.ngrok-free.app/games"
+      " https://768a-61-5-18-53.ngrok-free.app/games"
     );
 
     return response.data;
@@ -19,7 +19,7 @@ export const fetchArcadeDetail = createAsyncThunk(
   async (id) => {
     try {
       const response = await axios.get(
-        `https://1d45-27-50-29-117.ngrok-free.app/detail/${id}`
+        ` https://768a-61-5-18-53.ngrok-free.app/detail/${id}`
       );
 
       return response.data;
@@ -33,7 +33,7 @@ export const fetchArcadeDetail = createAsyncThunk(
 export const fetchArcade = createAsyncThunk("games/fetchArcade", async () => {
   try {
     const response = await axios.get(
-      "https://1d45-27-50-29-117.ngrok-free.app/main?lat=-6.3053252&lng=106.6435346"
+      " https://768a-61-5-18-53.ngrok-free.app/main?lat=-6.3053252&lng=106.6435346"
     );
 
     return response.data;
@@ -45,7 +45,7 @@ export const fetchArcade = createAsyncThunk("games/fetchArcade", async () => {
 export const fetchBrand = createAsyncThunk("games/fetchBrand", async () => {
   try {
     const response = await axios.get(
-      "https://1d45-27-50-29-117.ngrok-free.app/brands"
+      " https://768a-61-5-18-53.ngrok-free.app/brands"
     );
 
     return response.data;
@@ -60,7 +60,7 @@ export const fetchLogin = createAsyncThunk(
   async (credentials) => {
     try {
       const response = await axios.post(
-        `https://1d45-27-50-29-117.ngrok-free.app/users/login`,
+        ` https://768a-61-5-18-53.ngrok-free.app/users/login`,
         credentials
       );
 

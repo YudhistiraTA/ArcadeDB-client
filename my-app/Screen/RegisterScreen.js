@@ -11,15 +11,34 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
+import axios from "axios";
+
 function RegisterScreen() {
   const navigation = useNavigation();
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleViewMenu = () => {
-    navigation.navigate("Menu");
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post(
+        "https://768a-61-5-18-53.ngrok-free.app/users/register",
+        {
+          username,
+          email,
+          password,
+        }
+      );
+      console.log(response.data); // You can handle the response data here
+
+      // After successful registration, navigate to the Menu screen
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error(error);
+      // Handle errors here, such as displaying error messages
+    }
   };
+
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
@@ -43,8 +62,8 @@ function RegisterScreen() {
           <TextInput
             style={[styles.input, { fontFamily: "PressStart2P_400Regular" }]}
             placeholder="Username"
-            value={name}
-            onChangeText={setName}
+            value={username}
+            onChangeText={setUsername}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -72,7 +91,7 @@ function RegisterScreen() {
             secureTextEntry
           />
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleViewMenu}>
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
           <Text
             style={[
               styles.buttonText,
@@ -89,7 +108,7 @@ function RegisterScreen() {
               { fontFamily: "PressStart2P_400Regular" },
             ]}
           >
-            joined before? Login
+            Already registered? Login
           </Text>
         </TouchableOpacity>
       </View>

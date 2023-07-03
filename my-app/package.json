@@ -13,6 +13,7 @@
     "@expo-google-fonts/press-start-2p": "^0.2.3",
     "@fontsource/press-start-2p": "^5.0.3",
     "@mapbox/polyline": "^1.2.0",
+    "@react-native-async-storage/async-storage": "^1.19.0",
     "@react-native-community/checkbox": "^0.5.16",
     "@react-native-community/datetimepicker": "^7.3.0",
     "@react-native-picker/picker": "^2.4.10",

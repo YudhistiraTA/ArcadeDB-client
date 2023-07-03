@@ -12,16 +12,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
 import axios from "axios";
-import { saveLoginData } from "../config/storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function LoginScreen() {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleViewMenu = () => {
-    navigation.navigate("Message");
-  };
   const handleRegisterMenu = () => {
     navigation.navigate("Create");
   };
@@ -29,15 +26,17 @@ function LoginScreen() {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        `https://cc03-27-50-29-117.ngrok-free.app/users/login`,
+        `https://768a-61-5-18-53.ngrok-free.app/users/login`,
         {
           email: email,
           password: password,
         }
       );
       const token = response.data.token;
-      // Lakukan sesuatu dengan token, seperti menyimpannya di AsyncStorage
-      // atau mengatur state di komponen lain
+
+      // Simpan token ke AsyncStorage
+      await AsyncStorage.setItem("token", token);
+      navigation.navigate("Home");
 
       console.log(token);
     } catch (error) {

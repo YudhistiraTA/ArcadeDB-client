@@ -30,7 +30,7 @@ function Router() {
 
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Search") {
+          } else if (route.name === "Arcade List") {
             iconName = focused ? "rocket" : "rocket-outline";
           } else if (route.name === "Create") {
             iconName = "game-controller";
@@ -46,7 +46,7 @@ function Router() {
       tabBar={(props) => <TabBar {...props} />}
     >
       <Tab.Screen name="Home" component={MainStack} />
-      <Tab.Screen name="Search" component={ArcadeList} />
+      <Tab.Screen name="Arcade List" component={ArcadeList} />
       <Tab.Screen name="Create" component={CreateArcade} />
       <Tab.Screen name="Bookmark" component={BookmarkList} />
       <Tab.Screen name="Account" component={EditProfileScreen} />
@@ -57,7 +57,7 @@ export function MainStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Dashboard" component={HomeScreen} />
-      <Stack.Screen name="Inbox" component={InboxScreen} />
+      <Stack.Screen name="Inbox" component={RegisterScreen} />
       <Stack.Screen name="Message" component={MessageScreen} />
       <Stack.Screen name="ArcadeDetail" component={ArcadeDetail} />
       <Stack.Screen name="Profile" component={EditProfileScreen} />
@@ -65,6 +65,7 @@ export function MainStack() {
       <Stack.Screen name="Followers" component={FollowerList} />
       <Stack.Screen name="SearchAccount" component={SearchAccount} />
       <Stack.Screen name="UserProfile" component={UserProfile} />
+      <Stack.Screen name="Login" component={LoginScreen} />
     </Stack.Navigator>
   );
 }

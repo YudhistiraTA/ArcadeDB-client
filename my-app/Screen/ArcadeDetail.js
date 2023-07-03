@@ -29,10 +29,6 @@ const ArcadeDetail = ({ route }) => {
       await dispatch(fetchArcadeDetail(id));
     };
     handleArcadeDetail(id);
-    // const handleFetchGame = async () => {
-    //   await dispatch(fetchGame());
-    // };
-    // handleFetchGame();
   }, []);
 
   const initialLatitude = -6.2088;
@@ -155,7 +151,7 @@ const ArcadeDetail = ({ route }) => {
                 source={require("../assets/image/user3.png")}
                 style={[styles.circle, styles.circle1]}
               />
-              <Text style={{ marginLeft: 80 }}>
+              <Text style={{ marginLeft: 100 }}>
                 Didit and 8 users playing on 28 march 2023
               </Text>
             </View>
@@ -164,15 +160,14 @@ const ArcadeDetail = ({ route }) => {
         <View style={[styles.smallSquareRow, styles.smallCardRow]}>
           {arcadesDetail[0]?.ArcadeGame?.map((arcade) => (
             <View
-              key={arcade.id} // Add unique key prop
+              key={arcade.id}
               style={[styles.smallCard, styles.smallCardMargin]}
             >
               <Image
                 source={{ uri: arcade.Game.logoUrl }}
                 style={styles.smallCardImage}
               />
-              <Text>{arcade.Game.name}</Text>
-
+              <Text style={{ textAlign: "center" }}>{arcade.Game.name}</Text>
               <TouchableOpacity
                 style={styles.rateButton}
                 onPress={handleRateButton}
@@ -284,14 +279,20 @@ const styles = StyleSheet.create({
   },
   rateButton: {
     backgroundColor: "#FDF3E6",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
     borderRadius: 5,
+    marginBottom: 10,
+    height: 20,
+    width: 80,
+    marginTop: 5,
+    marginLeft: "auto",
+    marginRight: "auto",
+    display: "flex",
   },
   rateButtonText: {
     color: "black",
     fontWeight: "bold",
     fontSize: 12,
+    textAlign: "center",
   },
   bookButton: {
     backgroundColor: "#FDF3E6",
@@ -316,10 +317,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   circle: {
-    width: 25,
-    height: 25,
-    borderRadius: 25 / 2,
-    marginRight: -10,
+    width: 45,
+    height: 45,
+    borderRadius: 100,
   },
   circle1: {
     position: "absolute",
@@ -331,13 +331,14 @@ const styles = StyleSheet.create({
   circle2: {
     position: "absolute",
     zIndex: 2,
-    marginLeft: -10,
+    marginLeft: 20,
     borderWidth: 3,
     borderColor: "white",
   },
   circle3: {
     position: "absolute",
     zIndex: 1,
+    marginLeft: 40,
     borderWidth: 3,
     borderColor: "white",
   },

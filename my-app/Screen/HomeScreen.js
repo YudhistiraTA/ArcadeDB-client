@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -12,13 +12,48 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
-
+import axios from "axios";
 // Import images
 import arcadeImage from "../assets/image/imagesArcade.png";
 import userImage from "../assets/image/user3.png";
 import bannerImage from "../assets/image/imagesArcade.png"; // Import the banner image
-
+import * as Location from "expo-location";
 function HomeScreen() {
+  const [userLocation, setUserLocation] = React.useState({});
+  const [recommendations, setRecommendations] = React.useState({});
+  console.log(userLocation);
+  const requestLocationPermission = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      try {
+        const location = await Location.getCurrentPositionAsync();
+        const { latitude, longitude } = location.coords;
+        setUserLocation({
+          userLat: latitude,
+          userLong: longitude,
+        });
+      } catch (error) {
+        console.log("Error while fetching location:", error);
+      }
+    }
+  };
+  useEffect(() => {
+    const handleRecommendation = async () => {
+      try {
+        const { data } = await axios.get(
+          // `https://7878-27-50-29-117.ngrok-free.app/main?lat=${userLocation.userLat}&lng=${userLocation.userLong}`
+          `https://7878-27-50-29-117.ngrok-free.app/arcades`
+        );
+        // console.log(data);
+        setRecommendations(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    handleRecommendation();
+  }, []);
+
+  requestLocationPermission();
   const navigation = useNavigation();
 
   const handlePage = (page) => {
@@ -119,18 +154,21 @@ function HomeScreen() {
         </View>
 
         <Text style={styles.recommendationsText}>Recommendations</Text>
-
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <TouchableOpacity onPress={() => handlePage("ArcadeDetail")}>
-            <View style={[styles.card, { marginBottom: 30 }]}>
-              <Image source={arcadeImage} style={styles.cardImage} />
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText}>The Breeze, Tangerang</Text>
-                <Text style={styles.cardText}>☆☆☆☆☆</Text>
+          {recommendations.map((recommendation) => (
+            <TouchableOpacity onPress={() => handlePage("ArcadeDetail")}>
+              <View style={[styles.card, { marginBottom: 30 }]}>
+                <Image
+                  source={{ uri: recommendation.Brand.imageUrl }}
+                  style={styles.cardImage}
+                />
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardText}>{recommendation.name}</Text>
+                  <Text style={styles.cardText}>☆☆☆☆☆</Text>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-          {/* Add more card components here */}
+            </TouchableOpacity>
+          ))}
         </ScrollView>
       </View>
     </ScrollView>
