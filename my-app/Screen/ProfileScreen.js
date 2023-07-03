@@ -16,7 +16,6 @@ function EditProfileScreen() {
   const navigation = useNavigation();
   const [name, setName] = useState("");
   const [selectedProfile, setSelectedProfile] = useState("");
-  const [selectedBanner, setSelectedBanner] = useState("");
 
   const handleViewMenu = () => {
     navigation.navigate("Menu");
@@ -24,9 +23,6 @@ function EditProfileScreen() {
 
   const handleOptionProfile = (value) => {
     setSelectedProfile(value);
-  };
-  const handleOptionBanner = (value) => {
-    setSelectedBanner(value);
   };
 
   const [fontsLoaded] = useFonts({
@@ -100,23 +96,6 @@ function EditProfileScreen() {
             ))}
           </Picker>
           {renderOptionImage(selectedProfile)}
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Choose Banner Picture</Text>
-          <Picker
-            style={styles.picker}
-            selectedValue={selectedBanner}
-            onValueChange={handleOptionBanner}
-          >
-            {options.map((option) => (
-              <Picker.Item
-                key={option.value}
-                label={option.label}
-                value={option.value}
-              />
-            ))}
-          </Picker>
-          {renderOptionImage(selectedBanner)}
         </View>
         <TouchableOpacity style={styles.button} onPress={handleViewMenu}>
           <Text style={styles.buttonText}>Save</Text>

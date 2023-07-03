@@ -16,8 +16,8 @@ import EditProfileScreen from "../Screen/ProfileScreen";
 import BookmarkList from "../Screen/BookmarkScreen";
 import GameList from "../Screen/GameScreen";
 import FollowerList from "../Screen/FollowerScreen";
-import Test from "../Screen/test";
-import MapCoba from "../Screen/autocomplete";
+import UserProfile from "../Screen/UserProfile";
+import SearchAccount from "../Screen/SearchAccount";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -31,14 +31,12 @@ function Router() {
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Search") {
-            iconName = focused ? "search" : "search-outline";
+            iconName = focused ? "rocket" : "rocket-outline";
           } else if (route.name === "Create") {
             iconName = "game-controller";
           } else if (route.name === "Bookmark") {
             iconName = focused ? "bookmark" : "bookmark-outline";
           } else if (route.name === "Account") {
-            iconName = focused ? "person" : "person-outline";
-          } else if (route.name === "ArcadeDetail") {
             iconName = focused ? "person" : "person-outline";
           }
 
@@ -47,7 +45,7 @@ function Router() {
       })}
       tabBar={(props) => <TabBar {...props} />}
     >
-      <Tab.Screen name="Home" component={MapCoba} />
+      <Tab.Screen name="Home" component={MainStack} />
       <Tab.Screen name="Search" component={ArcadeList} />
       <Tab.Screen name="Create" component={CreateArcade} />
       <Tab.Screen name="Bookmark" component={BookmarkList} />
@@ -65,6 +63,8 @@ export function MainStack() {
       <Stack.Screen name="Profile" component={EditProfileScreen} />
       <Stack.Screen name="GameList" component={GameList} />
       <Stack.Screen name="Followers" component={FollowerList} />
+      <Stack.Screen name="SearchAccount" component={SearchAccount} />
+      <Stack.Screen name="UserProfile" component={UserProfile} />
     </Stack.Navigator>
   );
 }
