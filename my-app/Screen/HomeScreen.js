@@ -6,126 +6,134 @@ import {
   TextInput,
   Image,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-
-// Import image
-import arcadeImage from "../assets/image/imagesArcade.png";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
+// Import images
+import arcadeImage from "../assets/image/imagesArcade.png";
+import userImage from "../assets/image/user3.png";
+import bannerImage from "../assets/image/imagesArcade.png"; // Import the banner image
 
 function HomeScreen() {
-  const [fontsLoaded] = useFonts({
-    PressStart2P_400Regular,
-  });
   const navigation = useNavigation();
+
   const handlePage = (page) => {
     navigation.navigate(page);
   };
+  const [fontsLoaded] = useFonts({
+    PressStart2P_400Regular,
+  });
+
   if (!fontsLoaded) {
     return null;
   }
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBox}>
-          <TextInput style={styles.searchInput} placeholder="Search" />
-          <Ionicons
-            name="search"
-            size={24}
-            color="gray"
-            style={styles.searchIcon}
-          />
-        </View>
-      </View>
-      <View style={styles.squareContainer}>
-        <View style={[styles.columnContainer, { marginHorizontal: 10 }]}>
-          <TouchableOpacity onPress={() => handlePage("GameList")}>
-            <View style={styles.square}>
-              <View
-                style={[styles.iconContainer, { backgroundColor: "#E4B84C" }]}
-              >
-                <Ionicons name="game-controller" size={24} color="#FFFFFF" />
+    <ScrollView>
+      <View style={styles.container}>
+        <TouchableOpacity onPress={() => handlePage("ProfileDetail")}>
+          <View style={styles.profileContainer}>
+            <View style={styles.bannerContainer}>
+              {/* Banner Image */}
+              <Image source={bannerImage} style={styles.bannerImage} />
+            </View>
+
+            <View style={styles.profileCard}>
+              <View style={styles.profileImageContainer}>
+                {/* Circular Profile Image */}
+                <Image source={userImage} style={styles.profileImage} />
               </View>
-              <Text style={styles.squareText}>Games</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handlePage("Inbox")}>
-            <View style={styles.square}>
-              <View
-                style={[styles.iconContainer, { backgroundColor: "#EBB3C3" }]}
-              >
-                <Ionicons
-                  name="chatbubbles-outline"
-                  size={24}
-                  color="#FFFFFF"
-                />
+              <View style={styles.profileInfo}>
+                <Text style={styles.profileName}>John Doe</Text>
+                <Text style={styles.profileFollowers}>1.5k Followers</Text>
               </View>
-              <Text style={styles.squareText}>Messages</Text>
             </View>
-          </TouchableOpacity>
-        </View>
-        <View style={[styles.columnContainer, { marginHorizontal: 10 }]}>
-          <View style={styles.square}>
-            <View
-              style={[styles.iconContainer, { backgroundColor: "#9DBDFB" }]}
-            >
-              <Ionicons name="rocket-outline" size={24} color="#FFFFFF" />
-            </View>
-            <Text style={styles.squareText}>Arcades</Text>
           </View>
-          <TouchableOpacity onPress={() => handlePage("Followers")}>
-            <View style={styles.square}>
-              <View
-                style={[styles.iconContainer, { backgroundColor: "#81ADB4" }]}
-              >
-                <Ionicons name="people-outline" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+
+        <View style={styles.squareContainer}>
+          <View style={[styles.columnContainer, { marginHorizontal: 10 }]}>
+            <TouchableOpacity onPress={() => handlePage("GameList")}>
+              <View style={styles.square}>
+                <View
+                  style={[styles.iconContainer, { backgroundColor: "#E4B84C" }]}
+                >
+                  <Ionicons name="game-controller" size={24} color="#FFFFFF" />
+                </View>
+                <Text style={styles.squareText}>Games</Text>
               </View>
-              <Text style={styles.squareText}>Followers</Text>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handlePage("Inbox")}>
+              <View style={styles.square}>
+                <View
+                  style={[styles.iconContainer, { backgroundColor: "#EBB3C3" }]}
+                >
+                  <Ionicons
+                    name="chatbubbles-outline"
+                    size={24}
+                    color="#FFFFFF"
+                  />
+                </View>
+                <Text style={styles.squareText}>Messages</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={[styles.columnContainer, { marginHorizontal: 10 }]}>
+            <TouchableOpacity onPress={() => handlePage("SearchAccount")}>
+              <View style={styles.square}>
+                <View
+                  style={[styles.iconContainer, { backgroundColor: "#9DBDFB" }]}
+                >
+                  <Ionicons
+                    name="person-add-outline"
+                    size={24}
+                    color="#FFFFFF"
+                  />
+                </View>
+                <Text
+                  style={[
+                    styles.squareText,
+                    {
+                      fontSize: 6,
+                    },
+                  ]}
+                >
+                  Find Account
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handlePage("Followers")}>
+              <View style={styles.square}>
+                <View
+                  style={[styles.iconContainer, { backgroundColor: "#81ADB4" }]}
+                >
+                  <Ionicons name="people-outline" size={24} color="#FFFFFF" />
+                </View>
+                <Text style={styles.squareText}>Followers</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      <Text style={{ fontFamily: "PressStart2P_400Regular", marginBottom: 10 }}>
-        Recomendations
-      </Text>
-      <ScrollView>
+
+        <Text style={styles.recommendationsText}>Recommendations</Text>
+
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <TouchableOpacity onPress={() => handlePage("ArcadeDetail")}>
             <View style={[styles.card, { marginBottom: 30 }]}>
               <Image source={arcadeImage} style={styles.cardImage} />
               <View style={styles.cardContent}>
-                <Text style={styles.cardText}>The Breeze, Taangerang</Text>
+                <Text style={styles.cardText}>The Breeze, Tangerang</Text>
                 <Text style={styles.cardText}>☆☆☆☆☆</Text>
               </View>
             </View>
           </TouchableOpacity>
-          <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>The Breeze, Taangerang</Text>
-              <Text style={styles.cardText}>☆☆☆☆☆</Text>
-            </View>
-          </View>
-          <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>The Breeze, Taangerang</Text>
-              <Text style={styles.cardText}>☆☆☆☆☆</Text>
-            </View>
-          </View>
-          <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image source={arcadeImage} style={styles.cardImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>The Breeze, Taangerang</Text>
-              <Text style={styles.cardText}>☆☆☆☆☆</Text>
-            </View>
-          </View>
+          {/* Add more card components here */}
         </ScrollView>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -154,6 +162,46 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     marginLeft: 10,
+  },
+  profileContainer: {
+    marginBottom: 20,
+  },
+  bannerContainer: {
+    height: 150,
+    marginBottom: -6,
+    zIndex: 1,
+  },
+  bannerImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  profileCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
+  profileImageContainer: {
+    borderRadius: 40,
+    overflow: "hidden",
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+  },
+  profileInfo: {
+    marginLeft: 15,
+  },
+  profileName: {
+    fontSize: 20,
+    fontFamily: "PressStart2P_400Regular",
+  },
+  profileFollowers: {
+    fontSize: 14,
+    fontFamily: "PressStart2P_400Regular",
+    color: "gray",
   },
   squareContainer: {
     flexDirection: "row",
@@ -184,30 +232,31 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontFamily: "PressStart2P_400Regular",
   },
+  recommendationsText: {
+    fontFamily: "PressStart2P_400Regular",
+    fontSize: 14,
+    marginBottom: 10,
+  },
   card: {
     width: 300,
     height: 200,
     borderRadius: 15,
     backgroundColor: "#FFFFFF",
     marginRight: 10,
-    // elevation: 2,
   },
   cardImage: {
     width: "100%",
-    height: "70%",
+    height: "60%",
+    resizeMode: "cover",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
   },
   cardContent: {
-    flex: 1,
-    marginLeft: 10,
+    padding: 10,
   },
   cardText: {
-    marginTop: 10,
-    fontSize: 12,
-    // fontWeight: "bold",
-    color: "#000000",
     fontFamily: "PressStart2P_400Regular",
+    fontSize: 12,
   },
 });
 

@@ -41,6 +41,7 @@ const ArcadeDetail = ({ route }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
   const [selectedRating, setSelectedRating] = useState(0);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   const handleBookButton = () => {
     setModalVisible(true);
@@ -65,6 +66,10 @@ const ArcadeDetail = ({ route }) => {
   const handleRatingSelect = (rating) => {
     setSelectedRating(rating);
     setRatingModalVisible(false);
+  };
+
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
   };
 
   return (
@@ -107,13 +112,29 @@ const ArcadeDetail = ({ route }) => {
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={styles.bookButton}
+              style={[styles.bookButton, { marginRight: 10 }]}
               onPress={handleBookButton}
             >
               <Text style={styles.buttonText}>Book</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.rateButton}
+              onPress={handleBookmark}
+              style={
+                isBookmarked
+                  ? styles.bookmarkButtonActive
+                  : styles.bookmarkButton
+              }
+            >
+              <Text
+                style={
+                  isBookmarked ? styles.bookmarkTextActive : styles.bookmarkText
+                }
+              >
+                {isBookmarked ? "Bookmarked" : "Bookmark"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.rateButton, { marginRight: 10 }]}
               onPress={handleRateButton}
             >
               <Text style={styles.rateButtonText}>Rate</Text>
@@ -357,10 +378,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
+    width: "80%",
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    elevation: 5,
   },
   modalText: {
     fontSize: 18,
@@ -370,9 +391,8 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: "black",
-    borderRadius: 5,
+    padding: 10,
     marginBottom: 10,
-    paddingHorizontal: 10,
   },
   ratingContainer: {
     flexDirection: "row",
@@ -381,9 +401,38 @@ const styles = StyleSheet.create({
   },
   starButton: {
     marginHorizontal: 5,
+    padding: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "black",
   },
   starText: {
-    fontSize: 24,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  bookmark: {
+    fontWeight: "bold",
+    color: "gray",
+    marginTop: 5,
+  },
+  bookmarkButton: {
+    backgroundColor: "#FDF3E6",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+
+    borderColor: "black",
+    alignSelf: "flex-start",
+  },
+  bookmarkText: {
+    color: "black",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  bookmarkActive: {
+    fontWeight: "bold",
+    color: "green",
+    marginTop: 5,
   },
 });
 

@@ -11,20 +11,38 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
+import axios from "axios";
+import { saveLoginData } from "../config/storage";
+
 function LoginScreen() {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleViewMenu = () => {
-    navigation.navigate("Menu");
+    navigation.navigate("Message");
   };
   const handleRegisterMenu = () => {
     navigation.navigate("Create");
   };
 
-  const handleGoogleLogin = () => {
-    // Handle Google login logic
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(
+        `https://cc03-27-50-29-117.ngrok-free.app/users/login`,
+        {
+          email: email,
+          password: password,
+        }
+      );
+      const token = response.data.token;
+      // Lakukan sesuatu dengan token, seperti menyimpannya di AsyncStorage
+      // atau mengatur state di komponen lain
+
+      console.log(token);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const [fontsLoaded] = useFonts({
@@ -70,7 +88,7 @@ function LoginScreen() {
             secureTextEntry
           />
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleViewMenu}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text
             style={[
               styles.buttonText,
@@ -85,10 +103,7 @@ function LoginScreen() {
         >
           Or
         </Text>
-        <TouchableOpacity
-          style={styles.socialButton}
-          onPress={handleGoogleLogin}
-        >
+        <TouchableOpacity style={styles.socialButton}>
           <Ionicons
             name="logo-google"
             size={24}

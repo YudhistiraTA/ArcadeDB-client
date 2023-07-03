@@ -1,18 +1,35 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  TextInput,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
-import { CheckBox } from "react-native-elements";
-import { ScrollView } from "react-native-gesture-handler";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchGame, fetchArcade, fetchBrand } from "../Reducer/game";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { CheckBox } from "react-native-elements";
+import { fetchGame, fetchBrand } from "../Reducer/game";
+///////////////////////////////////////////////////////////
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { googleMapApi } from "../config/apiKey";
+import { ScrollView } from "react-native-gesture-handler";
+import * as Location from "expo-location";
+export default function MapCoba() {
+  // Maps
+  const [arcadeLocation, setArcadeLocation] = React.useState({});
+  const [userLocation, setUserLocation] = React.useState({});
 
-const CreateScreen = () => {
-  const [inputValue, setInputValue] = useState("");
+  const requestLocationPermission = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      try {
+        const location = await Location.getCurrentPositionAsync();
+        const { latitude, longitude } = location.coords;
+        setUserLocation({
+          userLat: latitude,
+          userLong: longitude,
+        });
+      } catch (error) {
+        console.log("Error while fetching location:", error);
+      }
+    }
+  };
+  requestLocationPermission();
+  ////////////////////////////////////////////////////////
   const [selectedLogo, setSelectedLogo] = useState("");
   const [checkboxItems, setCheckboxItems] = useState([false, false, false]);
   const games = useSelector((state) => state.games);
@@ -28,9 +45,6 @@ const CreateScreen = () => {
     };
     handleFetchBrand();
   }, []);
-  const handleInputChange = (text) => {
-    setInputValue(text);
-  };
 
   const handleLogoChange = (logo) => {
     setSelectedLogo(logo);
@@ -43,25 +57,44 @@ const CreateScreen = () => {
   };
 
   const handleSubmit = () => {
-    // Implement logic to handle form submission
     console.log("Form submitted!");
-    console.log("Input Value:", inputValue);
     console.log("Selected Logo:", selectedLogo);
     console.log("Checkbox Items:", checkboxItems);
+    console.log(arcadeLocation, "Location dari maps");
+    console.log(userLocation, "User Location");
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Text style={styles.selectLabel}>Pick Location:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Input Value"
-          value={inputValue}
-          onChangeText={handleInputChange}
-        />
-        <Text style={styles.resultText}>{inputValue}</Text>
-
+    <View style={styles.container}>
+      <Text style={styles.selectLabel}>Pick Location:</Text>
+      <GooglePlacesAutocomplete
+        placeholder="Search"
+        fetchDetails={true}
+        GooglePlacesSearchQuery={{
+          rankby: "distance",
+        }}
+        onPress={(data, details = null) => {
+          setArcadeLocation({
+            latitude: details.geometry.location.lat,
+            longitude: details.geometry.location.lng,
+          });
+        }}
+        query={{
+          key: googleMapApi,
+          language: "en",
+          types: "establishment",
+          radius: 30000,
+          location: `${arcadeLocation.latitude}, ${arcadeLocation.longitude}`,
+        }}
+        styles={{
+          container: {
+            flex: 0,
+            width: "100%",
+            zIndex: 1,
+          },
+        }}
+      />
+      <ScrollView>
         <View style={styles.selectContainer}>
           <Text style={styles.selectLabel}>Select Logo:</Text>
           <View style={styles.selectInput}>
@@ -79,7 +112,6 @@ const CreateScreen = () => {
             ))}
           </View>
         </View>
-
         <View style={styles.tableContainer}>
           <Text style={styles.selectLabel}>Add Games:</Text>
           {games[0]?.map((game, index) => (
@@ -92,14 +124,13 @@ const CreateScreen = () => {
             </View>
           ))}
         </View>
-
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -157,11 +188,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     alignItems: "center",
+    marginBottom: 50,
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
   },
 });
-
-export default CreateScreen;
