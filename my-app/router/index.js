@@ -55,9 +55,9 @@ function Router() {
 }
 export function MainStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={({ route }) => ({ headerShown: false })}>
       <Stack.Screen name="Dashboard" component={HomeScreen} />
-      <Stack.Screen name="Inbox" component={RegisterScreen} />
+      <Stack.Screen name="Inbox" component={InboxScreen} />
       <Stack.Screen name="Message" component={MessageScreen} />
       <Stack.Screen name="ArcadeDetail" component={ArcadeDetail} />
       <Stack.Screen name="Profile" component={EditProfileScreen} />

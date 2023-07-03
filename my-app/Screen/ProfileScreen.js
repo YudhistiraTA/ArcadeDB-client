@@ -100,6 +100,12 @@ function EditProfileScreen() {
         <TouchableOpacity style={styles.button} onPress={handleViewMenu}>
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "gold" }]}
+          onPress={handleViewMenu}
+        >
+          <Text style={styles.buttonText}>Buy Subscription</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

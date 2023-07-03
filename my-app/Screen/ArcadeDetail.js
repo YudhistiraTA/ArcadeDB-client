@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import DatePicker from "react-native-datepicker";
-import { fetchArcadeDetail } from "../Reducer/game";
+import { fetchArcade, fetchArcadeDetail } from "../Reducer/game";
 import { useDispatch, useSelector } from "react-redux";
 const { width, height } = Dimensions.get("window");
 

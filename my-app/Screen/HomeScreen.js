@@ -20,8 +20,7 @@ import bannerImage from "../assets/image/imagesArcade.png"; // Import the banner
 import * as Location from "expo-location";
 function HomeScreen() {
   const [userLocation, setUserLocation] = React.useState({});
-  const [recommendations, setRecommendations] = React.useState({});
-  console.log(userLocation);
+  const [recommendations, setRecommendations] = React.useState([]);
   const requestLocationPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
@@ -155,8 +154,11 @@ function HomeScreen() {
 
         <Text style={styles.recommendationsText}>Recommendations</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {recommendations.map((recommendation) => (
-            <TouchableOpacity onPress={() => handlePage("ArcadeDetail")}>
+          {recommendations?.map((recommendation) => (
+            <TouchableOpacity
+              onPress={() => handlePage("ArcadeDetail")}
+              key={recommendation.id}
+            >
               <View style={[styles.card, { marginBottom: 30 }]}>
                 <Image
                   source={{ uri: recommendation.Brand.imageUrl }}
