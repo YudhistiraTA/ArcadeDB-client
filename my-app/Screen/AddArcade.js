@@ -3,15 +3,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { CheckBox } from "react-native-elements";
 import { fetchGame, fetchBrand } from "../Reducer/game";
-///////////////////////////////////////////////////////////
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { googleMapApi } from "../config/apiKey";
 import { ScrollView } from "react-native-gesture-handler";
 import * as Location from "expo-location";
-export default function MapCoba() {
-  // Maps
-  const [arcadeLocation, setArcadeLocation] = React.useState({});
-  const [userLocation, setUserLocation] = React.useState({});
+import HeaderAD from "../components/header";
+import axios from "axios";
+import { BASE_URL } from "../config/api";
+export default function AddArcade() {
+  const [arcadeLocation, setArcadeLocation] = useState({});
+  const [userLocation, setUserLocation] = useState({});
 
   const requestLocationPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -19,6 +20,7 @@ export default function MapCoba() {
       try {
         const location = await Location.getCurrentPositionAsync();
         const { latitude, longitude } = location.coords;
+        console.log(location.coords);
         setUserLocation({
           userLat: latitude,
           userLong: longitude,
@@ -28,22 +30,20 @@ export default function MapCoba() {
       }
     }
   };
-  requestLocationPermission();
-  ////////////////////////////////////////////////////////
+
+  useEffect(() => {
+    requestLocationPermission();
+  }, []);
+
   const [selectedLogo, setSelectedLogo] = useState("");
-  const [checkboxItems, setCheckboxItems] = useState([false, false, false]);
+  const [checkboxItems, setCheckboxItems] = useState([]);
   const games = useSelector((state) => state.games);
   const brands = useSelector((state) => state.brands);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    const handleFetchGame = async () => {
-      await dispatch(fetchGame());
-    };
-    handleFetchGame();
-    const handleFetchBrand = async () => {
-      await dispatch(fetchBrand());
-    };
-    handleFetchBrand();
+    dispatch(fetchGame());
+    dispatch(fetchBrand());
   }, []);
 
   const handleLogoChange = (logo) => {
@@ -52,20 +52,43 @@ export default function MapCoba() {
 
   const handleCheck = (index) => {
     const updatedItems = [...checkboxItems];
-    updatedItems[index] = !updatedItems[index];
+    const checked = !updatedItems.includes(games[0][index].id);
+
+    if (checked) {
+      updatedItems.push(games[0][index].id);
+    } else {
+      const gameIndex = updatedItems.indexOf(games[0][index].id);
+      if (gameIndex !== -1) {
+        updatedItems.splice(gameIndex, 1);
+      }
+    }
+
     setCheckboxItems(updatedItems);
+    console.log(updatedItems);
   };
 
-  const handleSubmit = () => {
-    console.log("Form submitted!");
-    console.log("Selected Logo:", selectedLogo);
-    console.log("Checkbox Items:", checkboxItems);
-    console.log(arcadeLocation, "Location dari maps");
-    console.log(userLocation, "User Location");
+  const handleSubmit = async () => {
+    const formattedCheckboxItems = checkboxItems.map((id) => ({ id }));
+    const data = {
+      name: arcadeLocation.name,
+      lat: arcadeLocation.latitude,
+      lng: arcadeLocation.longitude,
+      BrandId: selectedLogo,
+      games: formattedCheckboxItems,
+    };
+    try {
+      const response = await axios.post(`${BASE_URL}/arcades`, data);
+      console.log("Arcade data submitted successfully:", response.data);
+    } catch (error) {
+      console.error("Error submitting arcade data:", error);
+    }
   };
 
   return (
     <View style={styles.container}>
+      <View style={{ height: 100, width: "100%" }}>
+        <HeaderAD style={{ marginBottom: 500 }} />
+      </View>
       <Text style={styles.selectLabel}>Pick Location:</Text>
       <GooglePlacesAutocomplete
         placeholder="Search"
@@ -77,6 +100,7 @@ export default function MapCoba() {
           setArcadeLocation({
             latitude: details.geometry.location.lat,
             longitude: details.geometry.location.lng,
+            name: data.structured_formatting.main_text,
           });
         }}
         query={{
@@ -91,20 +115,25 @@ export default function MapCoba() {
             flex: 0,
             width: "100%",
             zIndex: 1,
+            paddingHorizontal: 24,
           },
         }}
       />
-      <ScrollView>
+      <ScrollView
+        style={{
+          paddingHorizontal: 24,
+        }}
+      >
         <View style={styles.selectContainer}>
           <Text style={styles.selectLabel}>Select Logo:</Text>
           <View style={styles.selectInput}>
             {brands[0]?.map((brand) => (
               <TouchableOpacity
                 style={styles.logoOption}
-                onPress={() => handleLogoChange(brand.name)}
+                onPress={() => handleLogoChange(brand.id)}
                 key={brand.id}
               >
-                {selectedLogo === brand.name && (
+                {selectedLogo === brand.id && (
                   <View style={styles.logoSelected} />
                 )}
                 <Text>{brand.name}</Text>
@@ -117,8 +146,9 @@ export default function MapCoba() {
           {games[0]?.map((game, index) => (
             <View style={styles.tableRow} key={index}>
               <CheckBox
-                checked={checkboxItems[index]}
+                checked={checkboxItems.includes(game.id)}
                 onPress={() => handleCheck(index)}
+                checkedColor="#6F6B65"
               />
               <Text>{game.name}</Text>
             </View>
@@ -136,8 +166,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FDF3E6",
-    paddingHorizontal: 24,
-    paddingTop: 36,
   },
   input: {
     borderWidth: 1,
@@ -155,6 +183,7 @@ const styles = StyleSheet.create({
   selectLabel: {
     fontSize: 16,
     marginBottom: 8,
+    paddingHorizontal: 24,
   },
   selectInput: {
     borderWidth: 1,
@@ -171,7 +200,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: "blue",
+    backgroundColor: "#6F6B65",
     marginRight: 8,
   },
   tableContainer: {
@@ -183,7 +212,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   button: {
-    backgroundColor: "#64FCD9",
+    backgroundColor: "#6F6B65",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,

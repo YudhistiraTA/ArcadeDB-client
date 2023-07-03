@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   Image,
   ScrollView,
   TouchableOpacity,
@@ -12,16 +11,23 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
-import axios from "axios";
-// Import images
-import arcadeImage from "../assets/image/imagesArcade.png";
-import userImage from "../assets/image/user3.png";
-import bannerImage from "../assets/image/imagesArcade.png"; // Import the banner image
 import * as Location from "expo-location";
-import { BASE_URL } from "../config/api";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchGame, fetchArcade } from "../Reducer/game";
+import HeaderAD from "../components/header";
 function HomeScreen() {
   const [userLocation, setUserLocation] = React.useState({});
-  const [recommendations, setRecommendations] = React.useState([]);
+  const recommendations = useSelector((state) => state.arcades);
+  const games = useSelector((state) => state.games);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const handleFetchGame = async () => {
+      await dispatch(fetchGame());
+      await dispatch(fetchArcade());
+    };
+    handleFetchGame();
+  }, []);
   const requestLocationPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
@@ -37,21 +43,6 @@ function HomeScreen() {
       }
     }
   };
-  useEffect(() => {
-    const handleRecommendation = async () => {
-      try {
-        const { data } = await axios.get(
-          // `${BASE_URL}/main?lat=${userLocation.userLat}&lng=${userLocation.userLong}`
-          `${BASE_URL}/arcades`
-        );
-        // console.log(data);
-        setRecommendations(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    handleRecommendation();
-  }, []);
 
   requestLocationPermission();
   const navigation = useNavigation();
@@ -68,27 +59,8 @@ function HomeScreen() {
   }
   return (
     <ScrollView>
+      <HeaderAD />
       <View style={styles.container}>
-        <TouchableOpacity onPress={() => handlePage("ProfileDetail")}>
-          <View style={styles.profileContainer}>
-            <View style={styles.bannerContainer}>
-              {/* Banner Image */}
-              <Image source={bannerImage} style={styles.bannerImage} />
-            </View>
-
-            <View style={styles.profileCard}>
-              <View style={styles.profileImageContainer}>
-                {/* Circular Profile Image */}
-                <Image source={userImage} style={styles.profileImage} />
-              </View>
-              <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>John Doe</Text>
-                <Text style={styles.profileFollowers}>1.5k Followers</Text>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
-
         <View style={styles.squareContainer}>
           <View style={[styles.columnContainer, { marginHorizontal: 10 }]}>
             <TouchableOpacity onPress={() => handlePage("GameList")}>
@@ -101,18 +73,14 @@ function HomeScreen() {
                 <Text style={styles.squareText}>Games</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handlePage("Inbox")}>
+            <TouchableOpacity onPress={() => handlePage("Bookmark")}>
               <View style={styles.square}>
                 <View
                   style={[styles.iconContainer, { backgroundColor: "#EBB3C3" }]}
                 >
-                  <Ionicons
-                    name="chatbubbles-outline"
-                    size={24}
-                    color="#FFFFFF"
-                  />
+                  <Ionicons name="bookmark-outline" size={24} color="#FFFFFF" />
                 </View>
-                <Text style={styles.squareText}>Messages</Text>
+                <Text style={styles.squareText}>Bookmark</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -152,14 +120,10 @@ function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
-
-        <Text style={styles.recommendationsText}>Recommendations</Text>
+        <Text style={styles.recommendationsText}>Recommendation Arcades</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {recommendations?.map((recommendation) => (
-            <TouchableOpacity
-              onPress={() => handlePage("ArcadeDetail")}
-              key={recommendation.id}
-            >
+          {recommendations[0]?.map((recommendation) => (
+            <TouchableOpacity key={recommendation.id}>
               <View style={[styles.card, { marginBottom: 30 }]}>
                 <Image
                   source={{ uri: recommendation.Brand.imageUrl }}
@@ -167,6 +131,23 @@ function HomeScreen() {
                 />
                 <View style={styles.cardContent}>
                   <Text style={styles.cardText}>{recommendation.name}</Text>
+                  <Text style={styles.cardText}>☆☆☆☆☆</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        <Text style={styles.recommendationsText}>Recommendation Games</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {games[0]?.map((game) => (
+            <TouchableOpacity key={game.id}>
+              <View style={[styles.card, { marginBottom: 30 }]}>
+                <Image
+                  source={{ uri: game.logoUrl }}
+                  style={styles.cardImage}
+                />
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardText}>{game.name}</Text>
                   <Text style={styles.cardText}>☆☆☆☆☆</Text>
                 </View>
               </View>
@@ -204,46 +185,6 @@ const styles = StyleSheet.create({
   searchIcon: {
     marginLeft: 10,
   },
-  profileContainer: {
-    marginBottom: 20,
-  },
-  bannerContainer: {
-    height: 150,
-    marginBottom: -6,
-    zIndex: 1,
-  },
-  bannerImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  profileCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-  },
-  profileImageContainer: {
-    borderRadius: 40,
-    overflow: "hidden",
-  },
-  profileImage: {
-    width: 80,
-    height: 80,
-  },
-  profileInfo: {
-    marginLeft: 15,
-  },
-  profileName: {
-    fontSize: 20,
-    fontFamily: "PressStart2P_400Regular",
-  },
-  profileFollowers: {
-    fontSize: 14,
-    fontFamily: "PressStart2P_400Regular",
-    color: "gray",
-  },
   squareContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -262,6 +203,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginBottom: 10,
     paddingHorizontal: 10,
+    elevation: 20,
   },
   iconContainer: {
     borderRadius: 50,
@@ -284,6 +226,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: "#FFFFFF",
     marginRight: 10,
+    elevation: 5,
   },
   cardImage: {
     width: "100%",
@@ -293,6 +236,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
   },
   cardContent: {
+    marginTop: 10,
     padding: 10,
   },
   cardText: {

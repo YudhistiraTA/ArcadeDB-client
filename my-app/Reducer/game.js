@@ -28,9 +28,9 @@ export const fetchArcadeDetail = createAsyncThunk(
 
 export const fetchArcade = createAsyncThunk("games/fetchArcade", async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/arcades`);
-
-    return response.data;
+    const { data } = await axios.get(`${BASE_URL}/arcades`);
+    console.log(data);
+    return data;
   } catch (error) {
     console.error(error);
     throw error;

@@ -8,63 +8,64 @@ import {
   Image,
   FlatList,
 } from "react-native";
-import { useFonts } from "expo-font";
-import { useNavigation } from "@react-navigation/native";
-import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
+import { BASE_URL } from "../config/api";
 
 const SearchAccount = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [arcades, setArcades] = useState([]);
-  const navigation = useNavigation();
+  const [users, setUsers] = useState([]);
+  const [originalUsers, setOriginalUsers] = useState([]);
+  const [profilePictures, setProfilePictures] = useState([]);
+
+  useEffect(() => {
+    fetchUsers();
+    fetchProfilePictures();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/users`);
+      const data = await response.json();
+      setUsers(data);
+      setOriginalUsers(data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const fetchProfilePictures = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/pfps`);
+      const data = await response.json();
+      setProfilePictures(data);
+    } catch (error) {
+      console.error("Error fetching profile pictures:", error);
+    }
+  };
 
   const handleDetail = (id) => {
-    navigation.navigate("UserProfile", { id });
+    // Handle navigation to user profile details
   };
 
   const handleSearch = () => {
-    // Perform search action
-    console.log("Search query:", searchQuery);
-
-    // Filter the dummyUsers based on the searchQuery
-    const filteredUsers = dummyUsers.filter((user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    // Filter users based on searchQuery
+    const filteredUsers = originalUsers.filter(
+      (user) =>
+        user.username &&
+        user.username.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
-    // Update the arcades state with the filteredUsers
-    setArcades(filteredUsers);
+    setUsers(filteredUsers);
   };
 
-  const [fontsLoaded] = useFonts({
-    PressStart2P_400Regular,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
-  // Dummy data for testing
-  const dummyUsers = [
-    { id: 1, name: "John Doe", profileImage: "https://dummyurl.com/johndoe" },
-    {
-      id: 2,
-      name: "Jane Smith",
-      profileImage: "https://dummyurl.com/janesmith",
-    },
-    {
-      id: 3,
-      name: "Bob Johnson",
-      profileImage: "https://dummyurl.com/bobjohnson",
-    },
-  ];
+  const handleResetSearch = () => {
+    setSearchQuery("");
+    setUsers(originalUsers);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
         <TextInput
-          style={[
-            styles.searchInput,
-            { fontFamily: "PressStart2P_400Regular" },
-          ]}
+          style={styles.searchInput}
           placeholder="Search Friends..."
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
@@ -78,20 +79,24 @@ const SearchAccount = () => {
       </View>
 
       <FlatList
-        data={arcades}
+        data={users}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
             onPress={() => handleDetail(item.id)}
           >
+            {/* Render user profile picture based on user's id */}
             <Image
-              source={{ uri: item.profileImage }}
+              source={{
+                uri: profilePictures.find((profile) => profile.id === item.id)
+                  ?.imageUrl,
+              }}
               style={styles.cardImage}
               resizeMode="cover"
             />
             <View style={styles.cardContent}>
-              <Text style={styles.cardText}>{item.name}</Text>
+              <Text style={styles.cardText}>{item.username}</Text>
             </View>
           </TouchableOpacity>
         )}
@@ -122,11 +127,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   searchIcon: {
-    position: "absolute",
     backgroundColor: "#FFFFFF",
     padding: 10,
     borderRadius: 10,
-    right: 10,
   },
   iconImage: {
     width: 24,

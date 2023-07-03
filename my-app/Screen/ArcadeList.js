@@ -8,11 +8,12 @@ import {
   Image,
 } from "react-native";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
-import arcadeImage from "../assets/image/imagesArcade.png";
 import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchArcade } from "../Reducer/game";
+import { ScrollView } from "react-native-gesture-handler";
+import HeaderAD from "../components/header";
 const ArcadeList = () => {
   const arcades = useSelector((state) => state.arcades);
 
@@ -26,89 +27,92 @@ const ArcadeList = () => {
   }, []);
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
-
   const handleDetail = (id) => {
     console.log("first");
     navigation.navigate(`ArcadeDetail`, { id });
   };
   const handleSearch = () => {
-    // Perform search action
     console.log("Search query:", searchQuery);
   };
-
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
-
   if (!fontsLoaded) {
     return null;
   }
-
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={[
-            styles.searchInput,
-            { fontFamily: "PressStart2P_400Regular" },
-          ]}
-          placeholder="Search Arcade Location..."
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
-        <TouchableOpacity style={styles.searchIcon} onPress={handleSearch}>
-          <Image
-            source={require("../assets/icon/searchIcon.png")}
-            style={styles.iconImage}
-          />
-        </TouchableOpacity>
+    <View>
+      <View style={{ height: 90, width: "100%" }}>
+        <HeaderAD />
       </View>
-      <TouchableOpacity style={styles.globalSearchButton}>
-        <Text
-          style={[
-            styles.globalSearchText,
-            { fontFamily: "PressStart2P_400Regular" },
-          ]}
-        >
-          Global Search
-        </Text>
-      </TouchableOpacity>
-
-      {arcades[0]?.map((arcade) => (
-        <TouchableOpacity
-          onPress={() => handleDetail(arcade.id)}
-          key={arcade.id}
-        >
-          <View style={[styles.card, { marginBottom: 30 }]}>
-            <Image
-              source={{ uri: arcade.Brand.imageUrl }}
-              style={styles.cardImage}
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={[
+                styles.searchInput,
+                { fontFamily: "PressStart2P_400Regular" },
+              ]}
+              placeholder="Search Arcade Location..."
+              value={searchQuery}
+              onChangeText={(text) => setSearchQuery(text)}
             />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>{arcade.name}</Text>
-              <Text style={styles.cardText}>
-                {arcade.rating === 0 || arcade.rating === 100 ? "★★★★★" : null}
-
-                {arcade.rating === 80 && "★★★★☆"}
-                {arcade.rating === 60 && "★★★☆☆"}
-                {arcade.rating === 40 && "★★☆☆☆"}
-                {arcade.rating === 20 && "★☆☆☆☆"}
-              </Text>
-            </View>
+            <TouchableOpacity style={styles.searchIcon} onPress={handleSearch}>
+              <Image
+                source={require("../assets/icon/searchIcon.png")}
+                style={styles.iconImage}
+              />
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
-      ))}
+          <TouchableOpacity style={styles.globalSearchButton}>
+            <Text
+              style={[
+                styles.globalSearchText,
+                { fontFamily: "PressStart2P_400Regular" },
+              ]}
+            >
+              Global Search
+            </Text>
+          </TouchableOpacity>
+          {arcades[0]?.map((arcade) => (
+            <TouchableOpacity
+              onPress={() => handleDetail(arcade.id)}
+              key={arcade.id}
+            >
+              <View style={[styles.card]}>
+                <Image
+                  source={{ uri: arcade.Brand.imageUrl }}
+                  style={styles.cardImage}
+                />
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardText}>{arcade.name}</Text>
+                  <Text style={styles.cardText}>
+                    {arcade.rating === 0 || arcade.rating === 100
+                      ? "★★★★★"
+                      : null}
+
+                    {arcade.rating === 80 && "★★★★☆"}
+                    {arcade.rating === 60 && "★★★☆☆"}
+                    {arcade.rating === 40 && "★★☆☆☆"}
+                    {arcade.rating === 20 && "★☆☆☆☆"}
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#FDF3E6",
     padding: 16,
   },
   searchContainer: {
+    marginTop: 10,
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
@@ -138,7 +142,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 8,
     borderRadius: 10,
-    marginBottom: 16,
+    marginBottom: 150,
     alignSelf: "flex-start",
   },
   globalSearchText: {
@@ -151,19 +155,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
   },
-  // card: {
-  //   backgroundColor: "white",
-  //   borderRadius: 20,
-  //   height: 250,
-  //   // Tambahkan ukuran kartu dan properti lainnya yang Anda butuhkan
-  // },
   card: {
-    width: 300,
-    height: 200,
+    width: "100%",
+    height: 250,
     borderRadius: 15,
     backgroundColor: "#FFFFFF",
     marginRight: 10,
-    // elevation: 2,
+    marginTop: -100,
+    marginBottom: 150,
   },
   cardImage: {
     width: "100%",
@@ -178,7 +177,6 @@ const styles = StyleSheet.create({
   cardText: {
     marginTop: 10,
     fontSize: 12,
-    // fontWeight: "bold",
     color: "#000000",
     fontFamily: "PressStart2P_400Regular",
   },
