@@ -14,6 +14,9 @@ const OtherProfile = () => {
   const handleFollow = () => {
     console.log("first");
   };
+  const handleChat = () => {
+    console.log("Chat button pressed");
+  };
 
   return (
     <>
@@ -49,16 +52,21 @@ const OtherProfile = () => {
                   <Text style={styles.statLabel}>Following</Text>
                 </TouchableOpacity>
               </View>
-              <Text style={styles.premiumStatus}>Premium User</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={[styles.button, styles.followButton]}
+                  onPress={handleFollow}
+                >
+                  <Text style={styles.buttonText}>Follow</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.chatButton]}
+                  onPress={handleChat}
+                >
+                  <Text style={styles.buttonText}>Chat</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.logoutButton]}
-              onPress={handleFollow}
-            >
-              <Text style={styles.buttonText}>Follow</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -98,6 +106,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 3,
     borderColor: "#1877F2",
+    marginTop: -50,
   },
   profileImage: {
     width: 100,
@@ -114,6 +123,7 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 5,
   },
   stat: {
     alignItems: "center",
@@ -134,24 +144,27 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   button: {
     backgroundColor: "#1877F2",
     borderRadius: 15,
     paddingVertical: 10,
-    marginHorizontal: 20,
+
     alignItems: "center",
+    width: 75,
   },
   buttonText: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
-  editButton: {
+  followButton: {
     backgroundColor: "#1877F2",
   },
-  logoutButton: {
-    backgroundColor: "#1877F2",
+  chatButton: {
+    backgroundColor: "#FCAF17",
   },
 });
 

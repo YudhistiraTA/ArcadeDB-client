@@ -50,7 +50,7 @@ function LoginScreen() {
     <View style={styles.container}>
       <View style={styles.content}>
         <Image
-          source={require("../assets/icon/arcadeIcon.png")}
+          source={require("../assets/icon/logo2.png")}
           style={styles.image}
         />
         <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
@@ -92,27 +92,7 @@ function LoginScreen() {
             Login
           </Text>
         </TouchableOpacity>
-        <Text
-          style={[styles.orText, { fontFamily: "PressStart2P_400Regular" }]}
-        >
-          Or
-        </Text>
-        <TouchableOpacity style={styles.socialButton}>
-          <Ionicons
-            name="logo-google"
-            size={24}
-            color="white"
-            style={styles.socialIcon}
-          />
-          <Text
-            style={[
-              styles.socialButtonText,
-              { fontFamily: "PressStart2P_400Regular" },
-            ]}
-          >
-            Login with Google
-          </Text>
-        </TouchableOpacity>
+
         <TouchableOpacity onPress={handleRegisterMenu}>
           <Text
             style={[
@@ -147,7 +127,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginBottom: 10,
-    color: "#FFFFFF",
+    color: "gray",
   },
   inputContainer: {
     flexDirection: "row",
@@ -169,25 +149,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    backgroundColor: "#64FCD9",
+    backgroundColor: "gray",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 15,
     marginTop: 10,
   },
-  socialButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 15,
-    marginTop: 10,
-  },
+
   buttonText: {
-    color: "#6F6B65",
+    color: "white",
     fontSize: 16,
-    fontWeight: "bold",
   },
   orText: {
     marginTop: 10,
@@ -206,7 +177,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   signupText: {
-    marginTop: 10,
+    marginTop: 20,
     color: "#6F6B65",
   },
 });

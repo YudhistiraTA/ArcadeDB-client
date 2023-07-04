@@ -89,10 +89,9 @@ export default function AddArcade() {
 
   return (
     <View style={styles.container}>
-      <View style={{ height: 100, width: "100%" }}>
-        <HeaderAD style={{ marginBottom: 500 }} />
-      </View>
-      <Text style={styles.selectLabel}>Pick Location:</Text>
+      <Text style={[styles.selectLabel, { marginTop: 70 }]}>
+        Pick Location:
+      </Text>
       <GooglePlacesAutocomplete
         placeholder="Search"
         fetchDetails={true}

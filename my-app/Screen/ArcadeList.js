@@ -6,25 +6,30 @@ import {
   TouchableOpacity,
   Text,
   Image,
+  Dimensions,
 } from "react-native";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchArcade } from "../Reducer/game";
+import { fetchArcade, fetchArcadeGlobal } from "../Reducer/game";
 import { ScrollView } from "react-native-gesture-handler";
-import HeaderAD from "../components/header";
-
+const ScreenHeight = Dimensions.get("window").height;
 const ArcadeList = () => {
-  const arcades = useSelector((state) => state.arcades);
-
+  const storeArcades = useSelector((state) => state.arcades);
+  const [arcades, setArcades] = useState([]);
+  const [cutArcades, setCutArcades] = useState([]);
+  const [global, setGlobal] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const handleFetchArcade = async () => {
+    const fetchData = async () => {
       await dispatch(fetchArcade());
+      const temp = storeArcades[0]?.filter((arcade) => arcade.distance < 10);
+      setArcades(temp);
+      setCutArcades(temp);
     };
-    handleFetchArcade();
+    fetchData();
   }, []);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,6 +37,11 @@ const ArcadeList = () => {
 
   const handleDetail = (id) => {
     navigation.navigate("ArcadeDetail", { id });
+  };
+  const handleGlobalSearch = async () => {
+    setGlobal(!global);
+    if (global) setArcades(storeArcades[0]);
+    else setArcades(cutArcades);
   };
 
   const handleSearch = () => {
@@ -47,75 +57,73 @@ const ArcadeList = () => {
   }
 
   return (
-    <View>
-      <View style={{ height: 90, width: "100%" }}>
-        <HeaderAD />
-      </View>
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.searchContainer}>
-            <TextInput
-              style={[
-                styles.searchInput,
-                { fontFamily: "PressStart2P_400Regular" },
-              ]}
-              placeholder="Search Arcade Location..."
-              value={searchQuery}
-              onChangeText={(text) => setSearchQuery(text)}
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={[styles.searchContainer, { marginTop: 50 }]}>
+          <TextInput
+            style={[
+              styles.searchInput,
+              { fontFamily: "PressStart2P_400Regular" },
+            ]}
+            placeholder="Search Arcade Location..."
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
+          />
+          <TouchableOpacity style={styles.searchIcon} onPress={handleSearch}>
+            <Image
+              source={require("../assets/icon/searchIcon.png")}
+              style={styles.iconImage}
             />
-            <TouchableOpacity style={styles.searchIcon} onPress={handleSearch}>
-              <Image
-                source={require("../assets/icon/searchIcon.png")}
-                style={styles.iconImage}
-              />
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity style={styles.globalSearchButton}>
-            <Text
-              style={[
-                styles.globalSearchText,
-                { fontFamily: "PressStart2P_400Regular" },
-              ]}
-            >
-              Global Search
-            </Text>
           </TouchableOpacity>
-          {arcades[0]?.map((arcade) => (
-            <TouchableOpacity
-              onPress={() => handleDetail(arcade.id)}
-              key={arcade.id}
-            >
-              <View style={styles.card}>
-                <Image
-                  source={{ uri: arcade.Brand.imageUrl }}
-                  style={styles.cardImage}
-                />
-                <View style={styles.cardContent}>
-                  <Text style={styles.cardText}>{arcade.name}</Text>
-                  <Text style={styles.cardRating}>
-                    {arcade.rating === 0 || arcade.rating === 100
-                      ? "★★★★★"
-                      : null}
-
-                    {arcade.rating === 80 && "★★★★☆"}
-                    {arcade.rating === 60 && "★★★☆☆"}
-                    {arcade.rating === 40 && "★★☆☆☆"}
-                    {arcade.rating === 20 && "★☆☆☆☆"}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
         </View>
-      </ScrollView>
-    </View>
+        <TouchableOpacity
+          style={styles.globalSearchButton}
+          onPress={() => handleGlobalSearch()}
+        >
+          <Text
+            style={[
+              styles.globalSearchText,
+              { fontFamily: "PressStart2P_400Regular" },
+            ]}
+          >
+            Global Search
+          </Text>
+        </TouchableOpacity>
+        {arcades?.map((arcade) => (
+          <TouchableOpacity
+            onPress={() => handleDetail(arcade.id)}
+            key={arcade.id}
+          >
+            <View style={styles.card}>
+              <Image
+                source={{ uri: arcade.Brand.imageUrl }}
+                style={styles.cardImage}
+              />
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>{arcade.name}</Text>
+                <Text style={styles.cardRating}>
+                  {arcade.rating === 0 || arcade.rating === 100
+                    ? "★★★★★"
+                    : null}
+
+                  {arcade.rating === 80 && "★★★★☆"}
+                  {arcade.rating === 60 && "★★★☆☆"}
+                  {arcade.rating === 40 && "★★☆☆☆"}
+                  {arcade.rating === 20 && "★☆☆☆☆"}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#FDF3E6",
     padding: 16,
+    // height: ScreenHeight,
   },
   searchContainer: {
     marginTop: 10,

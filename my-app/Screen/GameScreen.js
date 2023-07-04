@@ -73,10 +73,11 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#6F6B65",
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 16,
+
     marginBottom: 16,
     textAlign: "center",
+    fontFamily: "PressStart2P_400Regular",
   },
   card: {
     backgroundColor: "#FFFFFF",

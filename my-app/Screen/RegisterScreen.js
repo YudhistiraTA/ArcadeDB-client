@@ -48,7 +48,7 @@ function RegisterScreen() {
     <View style={styles.container}>
       <View style={styles.content}>
         <Image
-          source={require("../assets/icon/arcadeIcon.png")}
+          source={require("../assets/icon/logo2.png")}
           style={styles.image}
         />
         <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginBottom: 10,
-    color: "#FFFFFF",
+    color: "gray",
   },
   inputContainer: {
     flexDirection: "row",
@@ -154,19 +154,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    backgroundColor: "#64FCD9",
+    backgroundColor: "gray",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 15,
     marginTop: 10,
   },
   buttonText: {
-    color: "#6F6B65",
+    color: "white",
     fontSize: 16,
-    fontWeight: "bold",
   },
   loginText: {
-    marginTop: 10,
+    marginTop: 20,
     color: "#6F6B65",
   },
 });

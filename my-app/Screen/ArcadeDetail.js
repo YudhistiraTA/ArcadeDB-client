@@ -204,7 +204,7 @@ const ArcadeDetail = ({ route }) => {
                 style={styles.rateGameButton}
                 onPress={handleRateButton}
               >
-                <Text style={styles.rateButtonText}>Inacurate</Text>
+                <Text style={styles.rateButton2Text}>Inacurate</Text>
               </TouchableOpacity>
             </View>
           ))}
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     display: "flex",
   },
   rateGameButton: {
-    backgroundColor: "#B31312",
+    backgroundColor: "gray",
     borderRadius: 5,
     marginBottom: 10,
     height: 20,
@@ -334,6 +334,12 @@ const styles = StyleSheet.create({
   },
   rateButtonText: {
     color: "black",
+    fontWeight: "bold",
+    fontSize: 12,
+    textAlign: "center",
+  },
+  rateButton2Text: {
+    color: "white",
     fontWeight: "bold",
     fontSize: 12,
     textAlign: "center",

@@ -103,12 +103,13 @@ const UserProfile = () => {
               <Text style={styles.premiumStatus}>Premium User</Text>
             </View>
           </View>
+          <View style={styles.buttonContainer}></View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button, styles.editButton]}
+              style={[styles.button, styles.subscriptionButton]}
               onPress={handleEditUser}
             >
-              <Text style={styles.buttonText}>Edit User</Text>
+              <Text style={styles.buttonText}>Buy Subscription</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonContainer}>
@@ -116,7 +117,7 @@ const UserProfile = () => {
               style={[styles.button, styles.logoutButton]}
               onPress={handleLogout}
             >
-              <Text style={styles.buttonText}>Logout</Text>
+              <Text style={styles.buttonLogOutText}>Logout</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -143,9 +144,8 @@ const UserProfile = () => {
                 value={newUsername}
                 onChangeText={setNewUsername}
               />
-              <Text style={styles.modalLabel}>Profile Picture:</Text>
               <View style={styles.selectContainer}>
-                <Text style={styles.selectLabel}>Select Logo:</Text>
+                <Text style={styles.modalLabel}>Profile Picture:</Text>
                 <View style={styles.selectInput}>
                   {brands[0]?.map((brand) => (
                     <TouchableOpacity
@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 3,
     borderColor: "#1877F2",
+    marginTop: -20,
   },
   profileImage: {
     width: 100,
@@ -227,6 +228,7 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 5,
   },
   stat: {
     alignItems: "center",
@@ -263,8 +265,18 @@ const styles = StyleSheet.create({
   editButton: {
     backgroundColor: "#1877F2",
   },
+  subscriptionButton: {
+    backgroundColor: "#E6B325",
+  },
   logoutButton: {
-    backgroundColor: "#FF0000",
+    backgroundColor: "#FFffff",
+    borderWidth: 2,
+    borderColor: "gray",
+  },
+  buttonLogOutText: {
+    color: "gray",
+    fontWeight: 800,
+    fontSize: 16,
   },
   modalContainer: {
     flex: 1,
