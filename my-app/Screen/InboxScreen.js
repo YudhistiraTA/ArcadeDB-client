@@ -15,14 +15,18 @@ import HeaderAD from "../components/header";
 const InboxScreen = () => {
   const messages = [
     { sender: "John Doe", message: "Hello" },
-    { sender: "Jane Smith", message: "Hi" },
-    { sender: "Mike Johnson", message: "Hey" },
+
     { sender: "John Doe", message: "Hello" },
     { sender: "Jane Smith", message: "Hi" },
-    { sender: "Mike Johnson", message: "Hey" },
     { sender: "John Doe", message: "Hello" },
     { sender: "Jane Smith", message: "Hi" },
-    { sender: "Mike Johnson", message: "Hey" },
+    { sender: "John Doe", message: "Hello" },
+    { sender: "Jane Smith", message: "Hi" },
+    { sender: "John Doe", message: "Hello" },
+    { sender: "Jane Smith", message: "Hi" },
+    { sender: "John Doe", message: "Hello" },
+    { sender: "Jane Smith", message: "Hi" },
+    { sender: "Jane Smith", message: "Hi" },
   ];
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -56,13 +60,12 @@ const InboxScreen = () => {
               activeOpacity={0.6}
             >
               <View style={styles.messageContainer}>
-                <View style={styles.iconContainer}>
-                  <Ionicons
-                    name="person-circle-outline"
-                    size={24}
-                    color="#555555"
-                  />
-                </View>
+                <Ionicons
+                  name="person-circle-outline"
+                  size={48}
+                  color="#128C7E"
+                  style={styles.icon}
+                />
                 <View style={styles.messageContent}>
                   <Text style={styles.sender}>{message.sender}</Text>
                   <Text style={styles.message}>{message.message}</Text>
@@ -85,7 +88,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 16,
     fontFamily: "PressStart2P_400Regular",
@@ -95,25 +98,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
-  iconContainer: {
+  icon: {
     marginRight: 16,
   },
   messageContent: {
     flex: 1,
   },
   sender: {
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: "bold",
     marginBottom: 4,
   },
   message: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#555555",
   },
   separator: {
     borderBottomWidth: 1,
-    borderBottomColor: "#555555",
-    marginTop: 8,
+    borderBottomColor: "#E5E5E5",
+    marginTop: 0,
+    marginBottom: 5,
   },
 });
 

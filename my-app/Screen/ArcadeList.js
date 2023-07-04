@@ -14,6 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchArcade } from "../Reducer/game";
 import { ScrollView } from "react-native-gesture-handler";
 import HeaderAD from "../components/header";
+
 const ArcadeList = () => {
   const arcades = useSelector((state) => state.arcades);
 
@@ -25,21 +26,26 @@ const ArcadeList = () => {
     };
     handleFetchArcade();
   }, []);
+
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
+
   const handleDetail = (id) => {
-    console.log("first");
-    navigation.navigate(`ArcadeDetail`, { id });
+    navigation.navigate("ArcadeDetail", { id });
   };
+
   const handleSearch = () => {
     console.log("Search query:", searchQuery);
   };
+
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
+
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <View>
       <View style={{ height: 90, width: "100%" }}>
@@ -79,14 +85,14 @@ const ArcadeList = () => {
               onPress={() => handleDetail(arcade.id)}
               key={arcade.id}
             >
-              <View style={[styles.card]}>
+              <View style={styles.card}>
                 <Image
                   source={{ uri: arcade.Brand.imageUrl }}
                   style={styles.cardImage}
                 />
                 <View style={styles.cardContent}>
                   <Text style={styles.cardText}>{arcade.name}</Text>
-                  <Text style={styles.cardText}>
+                  <Text style={styles.cardRating}>
                     {arcade.rating === 0 || arcade.rating === 100
                       ? "★★★★★"
                       : null}
@@ -149,20 +155,15 @@ const styles = StyleSheet.create({
     color: "#6F6B65",
     fontSize: 10,
   },
-  title: {
-    color: "#6F6B65",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
   card: {
     width: "100%",
     height: 250,
     borderRadius: 15,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#EFEFEF",
     marginRight: 10,
     marginTop: -100,
     marginBottom: 150,
+    elevation: 4, // Tambahkan elevation untuk efek bayangan
   },
   cardImage: {
     width: "100%",
@@ -179,6 +180,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#000000",
     fontFamily: "PressStart2P_400Regular",
+  },
+  cardRating: {
+    fontSize: 14,
+    color: "#FFD700",
+    marginBottom: 8, // Tambahkan margin bottom pada rating
   },
 });
 

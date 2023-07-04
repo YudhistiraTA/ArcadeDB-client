@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
 import axios from "axios";
-
+import { BASE_URL } from "../config/api";
 function RegisterScreen() {
   const navigation = useNavigation();
   const [username, setUsername] = useState("");
@@ -21,14 +21,11 @@ function RegisterScreen() {
 
   const handleRegister = async () => {
     try {
-      const response = await axios.post(
-        "https://768a-61-5-18-53.ngrok-free.app/users/register",
-        {
-          username,
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/users/register`, {
+        username,
+        email,
+        password,
+      });
       console.log(response.data); // You can handle the response data here
 
       // After successful registration, navigate to the Menu screen

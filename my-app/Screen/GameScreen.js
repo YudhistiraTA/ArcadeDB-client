@@ -1,18 +1,11 @@
 import React, { useEffect } from "react";
+import { View, StyleSheet, Image, Text, ScrollView } from "react-native";
 import {
-  View,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  Image,
-} from "react-native";
-import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
-import arcadeImage from "../assets/image/imagesArcade.png";
-import { useFonts } from "expo-font";
+  useFonts,
+  PressStart2P_400Regular,
+} from "@expo-google-fonts/press-start-2p";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchGame, fetchArcade } from "../Reducer/game";
-import { ScrollView } from "react-native-gesture-handler";
+import { fetchGame } from "../Reducer/game";
 import HeaderAD from "../components/header";
 
 const GameList = () => {
@@ -36,25 +29,36 @@ const GameList = () => {
 
   return (
     <>
-      <View style={{ height: 90, width: "100%" }}>
-        <HeaderAD />
-      </View>
       <ScrollView>
-        <View style={styles.container}>
-          <Text
-            style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}
+        <View style={{ flex: 1 }}>
+          <View style={{ height: 90, width: "100%" }}>
+            <HeaderAD />
+          </View>
+          <ScrollView
+            contentContainerStyle={styles.container}
+            showsVerticalScrollIndicator={false}
           >
-            Game List
-          </Text>
+            <Text
+              style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}
+            >
+              Game List
+            </Text>
 
-          {games[0]?.map((game) => (
-            <View style={[styles.card, { marginBottom: 30 }]} key={game.id}>
-              <Image source={{ uri: game.logoUrl }} style={styles.cardImage} />
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText}>{game.name}</Text>
+            {games[0]?.map((game) => (
+              <View style={styles.card} key={game.id}>
+                <Image
+                  source={{ uri: game.logoUrl }}
+                  style={styles.cardImage}
+                  resizeMode="contain"
+                />
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardTitle}>{game.name}</Text>
+                  <Text style={styles.cardText}>{game.genre}</Text>
+                  <Text style={styles.cardText}>{game.platform}</Text>
+                </View>
               </View>
-            </View>
-          ))}
+            ))}
+          </ScrollView>
         </View>
       </ScrollView>
     </>
@@ -69,31 +73,50 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#6F6B65",
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 16,
+    textAlign: "center",
   },
   card: {
-    flex: 1, // Occupy full width
-    height: 200,
-    borderRadius: 15,
     backgroundColor: "#FFFFFF",
-    marginBottom: 30,
+    borderRadius: 10,
+    marginBottom: 20,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   cardImage: {
-    width: "100%",
-    height: "70%",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    width: 80,
+    height: 80,
+    resizeMode: "cover",
+    borderRadius: 10,
+    marginRight: 16,
   },
   cardContent: {
     flex: 1,
+  },
+  cardTitle: {
+    marginTop: 50,
+    fontSize: 16,
+    color: "#000000",
+    fontFamily: "PressStart2P_400Regular",
+    marginBottom: 8,
+    textAlignVertical: "center",
     marginLeft: 10,
   },
+
   cardText: {
-    marginTop: 10,
     fontSize: 12,
-    color: "#000000",
+    color: "#6F6B65",
     fontFamily: "PressStart2P_400Regular",
   },
 });

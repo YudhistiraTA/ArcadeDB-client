@@ -13,9 +13,10 @@ import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
 import * as Location from "expo-location";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchGame, fetchArcade } from "../Reducer/game";
+import { fetchGame, fetchArcade, fetchArcadeDetail } from "../Reducer/game";
 import HeaderAD from "../components/header";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 function HomeScreen() {
   const [userLocation, setUserLocation] = React.useState({});
   const recommendations = useSelector((state) => state.arcades);
@@ -36,6 +37,16 @@ function HomeScreen() {
     };
     handleFetchGame();
   }, []);
+
+  useEffect(() => {
+    const fetchArcadeDetails = async () => {
+      for (const recommendation of recommendations[0] || []) {
+        await dispatch(fetchArcadeDetail(recommendation.id));
+      }
+    };
+    fetchArcadeDetails();
+  }, [recommendations]);
+
   const requestLocationPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
@@ -58,6 +69,11 @@ function HomeScreen() {
   const handlePage = (page) => {
     navigation.navigate(page);
   };
+
+  const handleArcadeDetail = (id) => {
+    navigation.navigate("ArcadeDetail", { id });
+  };
+
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
@@ -65,6 +81,7 @@ function HomeScreen() {
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <ScrollView>
       <HeaderAD />
@@ -131,7 +148,10 @@ function HomeScreen() {
         <Text style={styles.recommendationsText}>Recommendation Arcades</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {recommendations[0]?.map((recommendation) => (
-            <TouchableOpacity key={recommendation.id}>
+            <TouchableOpacity
+              key={recommendation.id}
+              onPress={() => handleArcadeDetail(recommendation.id)}
+            >
               <View style={[styles.card, { marginBottom: 30 }]}>
                 <Image
                   source={{ uri: recommendation.Brand.imageUrl }}

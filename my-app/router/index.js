@@ -44,12 +44,22 @@ const Router = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("access_token");
+      setIsAuthenticated(false);
+      navigation.navigate("Login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <Stack.Navigator screenOptions={({ route }) => ({ headerShown: false })}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Dashboard" component={TabBar} />
+        <Stack.Screen name="Dashboard" component={Router} />
       </Stack.Navigator>
     );
   }
@@ -82,7 +92,9 @@ const Router = () => {
       <Tab.Screen name="Arcade List" component={ArcadeList} />
       <Tab.Screen name="Create" component={CreateArcade} />
       <Tab.Screen name="Inbox" component={InboxScreen} />
-      <Tab.Screen name="Account" component={UserProfile} />
+      <Tab.Screen name="Account">
+        {() => <UserProfile handleLogout={handleLogout} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 };
@@ -106,9 +118,7 @@ const HomeStack = () => {
   );
 };
 
-const TabBar = ({ state, descriptors }) => {
-  const navigation = useNavigation();
-
+const TabBar = ({ state, descriptors, navigation }) => {
   const centerButtonHandler = () => {
     navigation.navigate("Create");
   };
@@ -128,12 +138,14 @@ const TabBar = ({ state, descriptors }) => {
               style={styles.centerButtonContainer}
             >
               <View style={styles.centerButton}>
-                <TabIcon
-                  name={route.name}
-                  focused={isFocused}
-                  size={24}
-                  color="#5A5A5A"
-                />
+                {TabIcon && (
+                  <TabIcon
+                    name={route.name}
+                    focused={isFocused}
+                    size={24}
+                    color="#5A5A5A"
+                  />
+                )}
               </View>
             </TouchableOpacity>
           );

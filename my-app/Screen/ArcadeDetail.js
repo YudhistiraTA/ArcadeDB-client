@@ -35,7 +35,6 @@ const ArcadeDetail = ({ route }) => {
   }, [id]);
 
   const arcade = arcadesDetail.find((arcade) => arcade.id === id);
-  console.log(arcadesDetail[0].Session);
   const initialLatitude = arcade ? arcade.lat : -6.2088;
   const initialLongitude = arcade ? arcade.lng : 106.8456;
 
@@ -130,6 +129,8 @@ const ArcadeDetail = ({ route }) => {
                 arcadesDetail.find((arcade) => arcade.id === id)?.rating === 100
                   ? "★★★★★"
                   : null}
+                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
+                  100 && "★★★★★"}
                 {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
                   80 && "★★★★☆"}
                 {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
