@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 import HomeScreen from "../Screen/HomeScreen";
 import LoginScreen from "../Screen/LoginScreen";
@@ -16,12 +18,42 @@ import EditProfileScreen from "../Screen/ProfileScreen";
 import BookmarkList from "../Screen/BookmarkScreen";
 import GameList from "../Screen/GameScreen";
 import FollowerList from "../Screen/FollowerScreen";
+import FollowingList from "../Screen/FollowingScreen";
 import UserProfile from "../Screen/UserProfile";
 import SearchAccount from "../Screen/SearchAccount";
+import UserSchedule from "../Screen/UserSchedule";
+import OtherProfile from "../Screen/OtherProfile";
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function Router() {
+const Router = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    checkAuthentication();
+  }, []);
+
+  const checkAuthentication = async () => {
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+      setIsAuthenticated(!!token);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <Stack.Navigator screenOptions={({ route }) => ({ headerShown: false })}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Dashboard" component={TabBar} />
+      </Stack.Navigator>
+    );
+  }
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -46,31 +78,37 @@ function Router() {
       })}
       tabBar={(props) => <TabBar {...props} />}
     >
-      <Tab.Screen name="Home" component={MainStack} />
+      <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Arcade List" component={ArcadeList} />
       <Tab.Screen name="Create" component={CreateArcade} />
       <Tab.Screen name="Inbox" component={InboxScreen} />
       <Tab.Screen name="Account" component={UserProfile} />
     </Tab.Navigator>
   );
-}
-export function MainStack() {
+};
+
+const HomeStack = () => {
   return (
     <Stack.Navigator screenOptions={({ route }) => ({ headerShown: false })}>
       <Stack.Screen name="Dashboard" component={HomeScreen} />
+      <Stack.Screen name="GameList" component={GameList} />
       <Stack.Screen name="Bookmark" component={BookmarkList} />
-      <Stack.Screen name="Message" component={MessageScreen} />
+      <Stack.Screen name="SearchAccount" component={SearchAccount} />
+      <Stack.Screen name="UserSchedule" component={UserSchedule} />
       <Stack.Screen name="ArcadeDetail" component={ArcadeDetail} />
       <Stack.Screen name="Profile" component={EditProfileScreen} />
-      <Stack.Screen name="GameList" component={GameList} />
-      <Stack.Screen name="Followers" component={FollowerList} />
-      <Stack.Screen name="SearchAccount" component={SearchAccount} />
-      <Stack.Screen name="UserProfile" component={UserProfile} />
+      <Stack.Screen name="Follower" component={FollowerList} />
+      <Stack.Screen name="Following" component={FollowingList} />
+      <Stack.Screen name="VisitAccount" component={OtherProfile} />
+      <Stack.Screen name="Message" component={MessageScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
     </Stack.Navigator>
   );
-}
-function TabBar({ state, descriptors, navigation }) {
+};
+
+const TabBar = ({ state, descriptors }) => {
+  const navigation = useNavigation();
+
   const centerButtonHandler = () => {
     navigation.navigate("Create");
   };
@@ -120,7 +158,7 @@ function TabBar({ state, descriptors, navigation }) {
       })}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -133,7 +171,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    height: "100%", // Add this line to fix the height
+    height: "100%",
   },
   centerButtonContainer: {
     flex: 1,

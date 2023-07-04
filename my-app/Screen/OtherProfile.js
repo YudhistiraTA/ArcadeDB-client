@@ -6,25 +6,13 @@ import HeaderAD from "../components/header";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const UserProfile = () => {
+const OtherProfile = () => {
   const navigation = useNavigation();
   const handlePage = (page) => {
     navigation.navigate(page);
   };
-
-  const handleEditUser = () => {};
-  const clearAccessToken = async () => {
-    try {
-      await AsyncStorage.removeItem("access_token");
-      navigation.navigate("Dashboard");
-      console.log("Access token cleared successfully");
-    } catch (error) {
-      console.log("Error clearing access token", error);
-    }
-  };
-  const handleLogout = () => {
-    clearAccessToken();
-    navigation.navigate("Login");
+  const handleFollow = () => {
+    console.log("first");
   };
 
   return (
@@ -66,18 +54,10 @@ const UserProfile = () => {
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button, styles.editButton]}
-              onPress={handleEditUser}
-            >
-              <Text style={styles.buttonText}>Edit User</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
               style={[styles.button, styles.logoutButton]}
-              onPress={handleLogout}
+              onPress={handleFollow}
             >
-              <Text style={styles.buttonText}>Logout</Text>
+              <Text style={styles.buttonText}>Follow</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -171,8 +151,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#1877F2",
   },
   logoutButton: {
-    backgroundColor: "#FF0000",
+    backgroundColor: "#1877F2",
   },
 });
 
-export default UserProfile;
+export default OtherProfile;

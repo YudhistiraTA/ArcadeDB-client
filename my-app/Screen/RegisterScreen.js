@@ -101,7 +101,7 @@ function RegisterScreen() {
             Register
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Search")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
           <Text
             style={[
               styles.loginText,

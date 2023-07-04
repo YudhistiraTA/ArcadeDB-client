@@ -32,10 +32,13 @@ const ArcadeDetail = ({ route }) => {
       await dispatch(fetchArcadeDetail(id));
     };
     handleArcadeDetail(id);
-  }, []);
+  }, [id]);
 
-  const initialLatitude = -6.2088;
-  const initialLongitude = 106.8456;
+  const arcade = arcadesDetail.find((arcade) => arcade.id === id);
+  console.log(arcadesDetail[0].Session);
+  const initialLatitude = arcade ? arcade.lat : -6.2088;
+  const initialLongitude = arcade ? arcade.lng : 106.8456;
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
@@ -74,7 +77,7 @@ const ArcadeDetail = ({ route }) => {
       if (token) {
         const config = {
           headers: {
-            token: token,
+            access_token: token,
           },
         };
 
@@ -117,22 +120,28 @@ const ArcadeDetail = ({ route }) => {
         </MapView>
         <View style={[styles.card, styles.bigCard]}>
           <View style={styles.headerContainer}>
-            <Text style={styles.arcadeName}>{arcadesDetail[0]?.name}</Text>
-
+            <Text style={styles.arcadeName}>
+              {arcadesDetail.find((arcade) => arcade.id === id)?.name || ""}
+            </Text>
             <View style={styles.rateContainer}>
               <Text style={styles.rateText}>
-                {arcadesDetail[0]?.rating === 0 ||
-                arcadesDetail[0]?.rating === 100
+                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
+                  0 ||
+                arcadesDetail.find((arcade) => arcade.id === id)?.rating === 100
                   ? "★★★★★"
                   : null}
-
-                {arcadesDetail[0]?.rating === 80 && "★★★★☆"}
-                {arcadesDetail[0]?.rating === 60 && "★★★☆☆"}
-                {arcadesDetail[0]?.rating === 40 && "★★☆☆☆"}
-                {arcadesDetail[0]?.rating === 20 && "★☆☆☆☆"}
+                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
+                  80 && "★★★★☆"}
+                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
+                  60 && "★★★☆☆"}
+                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
+                  40 && "★★☆☆☆"}
+                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
+                  20 && "★☆☆☆☆"}
               </Text>
             </View>
           </View>
+
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.bookButton, { marginRight: 10 }]}
@@ -164,31 +173,25 @@ const ArcadeDetail = ({ route }) => {
               <Text style={styles.rateButtonText}>Rate</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.userScheduleContainer}>
-            <Text style={styles.userScheduleText}>User Schedule</Text>
-            <View style={styles.circleContainer}>
-              <Image
-                source={require("../assets/image/user1.png")}
-                style={[styles.circle, styles.circle3]}
-              />
-              <Image
-                source={require("../assets/image/user2.png")}
-                style={[styles.circle, styles.circle2]}
-              />
-              <Image
-                source={require("../assets/image/user3.png")}
-                style={[styles.circle, styles.circle1]}
-              />
+          {Object.entries(arcadesDetail[0]?.Session).map(([key, value]) => (
+            <View key={key} style={styles.circleContainer}>
+              {value.map((user, index) => (
+                <Image
+                  key={index}
+                  source={require("../assets/image/user1.png")}
+                  style={[styles.circle, styles[`circle${index + 1}`]]}
+                />
+              ))}
               <Text style={{ marginLeft: 100 }}>
-                Didit and 8 users playing on 28 march 2023
+                {value.map((user) => user.User).join(" and ")} playing on {key}
               </Text>
             </View>
-          </View>
+          ))}
         </View>
         <View style={[styles.smallSquareRow, styles.smallCardRow]}>
           {arcadesDetail[0]?.ArcadeGame?.map((arcade) => (
             <View
-              key={arcade.id}
+              key={arcade.Game.id}
               style={[styles.smallCard, styles.smallCardMargin]}
             >
               <Image
@@ -197,10 +200,10 @@ const ArcadeDetail = ({ route }) => {
               />
               <Text style={{ textAlign: "center" }}>{arcade.Game.name}</Text>
               <TouchableOpacity
-                style={styles.rateButton}
+                style={styles.rateGameButton}
                 onPress={handleRateButton}
               >
-                <Text style={styles.rateButtonText}>Rate</Text>
+                <Text style={styles.rateButtonText}>Inacurate</Text>
               </TouchableOpacity>
             </View>
           ))}
@@ -270,7 +273,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "90%",
-    height: 250,
+    height: "auto",
     backgroundColor: "white",
     alignSelf: "center",
     marginTop: 20,
@@ -278,6 +281,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
     paddingHorizontal: 10,
     paddingTop: 10,
+    paddingBottom: 10,
   },
   bigCard: {
     marginBottom: 20,
@@ -307,6 +311,17 @@ const styles = StyleSheet.create({
   },
   rateButton: {
     backgroundColor: "#FDF3E6",
+    borderRadius: 5,
+    marginBottom: 10,
+    height: 20,
+    width: 80,
+    marginTop: 5,
+    marginLeft: "auto",
+    marginRight: "auto",
+    display: "flex",
+  },
+  rateGameButton: {
+    backgroundColor: "#B31312",
     borderRadius: 5,
     marginBottom: 10,
     height: 20,
@@ -376,26 +391,27 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   smallSquareRow: {
+    width: "90%",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignSelf: "center",
   },
   smallCardRow: {
     marginBottom: 10,
   },
   smallCard: {
-    width: "48%",
+    width: "45%",
     height: "100%",
     backgroundColor: "white",
     borderWidth: 2,
     borderColor: "black",
-    paddingHorizontal: 10,
     paddingTop: 10,
   },
   smallCardMargin: {
     marginRight: 0,
   },
   smallCardImage: {
-    width: 60,
+    width: "100%",
     height: 60,
     alignSelf: "center",
     marginBottom: 10,

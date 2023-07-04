@@ -3,6 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
+  Image,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
@@ -12,7 +13,7 @@ import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
 import HeaderAD from "../components/header";
 
-const InboxScreen = () => {
+const UserSchedule = () => {
   const messages = [
     { sender: "John Doe", message: "Hello" },
     { sender: "Jane Smith", message: "Hi" },
@@ -47,31 +48,29 @@ const InboxScreen = () => {
         <HeaderAD />
       </View>
       <View style={styles.container}>
-        <Text style={styles.title}>Inbox</Text>
-        <ScrollView>
-          {messages.map((message, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handlePressMessage(message)}
-              activeOpacity={0.6}
-            >
-              <View style={styles.messageContainer}>
-                <View style={styles.iconContainer}>
-                  <Ionicons
-                    name="person-circle-outline"
-                    size={24}
-                    color="#555555"
-                  />
-                </View>
-                <View style={styles.messageContent}>
-                  <Text style={styles.sender}>{message.sender}</Text>
-                  <Text style={styles.message}>{message.message}</Text>
-                </View>
-              </View>
-              {index < messages.length - 1 && <View style={styles.separator} />}
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        <Text style={styles.title}>My Shedule</Text>
+        <View style={styles.container}>
+          <View style={styles.scheduleItem}>
+            <Image
+              source={require("../assets/image/user1.png")}
+              style={styles.image}
+            />
+            <View style={styles.detailsContainer}>
+              <Text style={styles.arcadeName}>Arcade Name</Text>
+              <Text style={styles.date}>July 4, 2023</Text>
+            </View>
+          </View>
+          <View style={styles.scheduleItem}>
+            <Image
+              source={require("../assets/image/user1.png")}
+              style={styles.image}
+            />
+            <View style={styles.detailsContainer}>
+              <Text style={styles.arcadeName}>Arcade Name</Text>
+              <Text style={styles.date}>July 5, 2023</Text>
+            </View>
+          </View>
+        </View>
       </View>
     </>
   );
@@ -85,36 +84,37 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   title: {
-    fontSize: 18,
+    marginTop: 10,
+    marginLeft: 20,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 16,
-    fontFamily: "PressStart2P_400Regular",
   },
-  messageContainer: {
+  scheduleItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 10,
   },
-  iconContainer: {
-    marginRight: 16,
+  imageContainer: {
+    backgroundColor: "#1877F2",
+    borderRadius: 50,
+    padding: 10,
   },
-  messageContent: {
-    flex: 1,
+  image: {
+    width: 40,
+    height: 40,
   },
-  sender: {
-    fontSize: 12,
+  detailsContainer: {
+    marginLeft: 10,
+  },
+  arcadeName: {
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 4,
   },
-  message: {
-    fontSize: 12,
-    color: "#555555",
-  },
-  separator: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#555555",
-    marginTop: 8,
+  date: {
+    fontSize: 16,
+    color: "gray",
   },
 });
 
-export default InboxScreen;
+export default UserSchedule;

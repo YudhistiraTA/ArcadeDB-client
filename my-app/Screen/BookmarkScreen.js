@@ -10,6 +10,7 @@ import {
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import arcadeImage from "../assets/image/imagesArcade.png";
 import { useFonts } from "expo-font";
+import HeaderAD from "../components/header";
 
 const BookmarkList = () => {
   const [fontsLoaded] = useFonts({
@@ -21,19 +22,24 @@ const BookmarkList = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
-        Bookmark List
-      </Text>
+    <>
+      <View style={{ height: 90, width: "100%" }}>
+        <HeaderAD />
+      </View>
+      <View style={styles.container}>
+        <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
+          Bookmark List
+        </Text>
 
-      <View style={[styles.card, { marginBottom: 30 }]}>
-        <Image source={arcadeImage} style={styles.cardImage} />
-        <View style={styles.cardContent}>
-          <Text style={styles.cardText}>The Breeze, Taangerang</Text>
-          <Text style={styles.cardText}>☆☆☆☆☆</Text>
+        <View style={[styles.card, { marginBottom: 30 }]}>
+          <Image source={arcadeImage} style={styles.cardImage} />
+          <View style={styles.cardContent}>
+            <Text style={styles.cardText}>The Breeze, Taangerang</Text>
+            <Text style={styles.cardText}>☆☆☆☆☆</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </>
   );
 };
 

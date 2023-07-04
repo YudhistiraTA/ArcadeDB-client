@@ -28,6 +28,7 @@
     "expo-location": "~15.1.1",
     "expo-status-bar": "~1.4.4",
     "expo-updates": "~0.16.4",
+    "firebase": "^9.23.0",
     "geolib": "^3.3.4",
     "graphql": "^15.8.0",
     "install": "^0.13.0",

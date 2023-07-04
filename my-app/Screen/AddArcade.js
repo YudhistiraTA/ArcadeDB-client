@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { CheckBox } from "react-native-elements";
-import { fetchGame, fetchBrand } from "../Reducer/game";
+import { fetchGame, fetchBrand, fetchArcade } from "../Reducer/game";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { googleMapApi } from "../config/apiKey";
 import { ScrollView } from "react-native-gesture-handler";
@@ -10,10 +10,11 @@ import * as Location from "expo-location";
 import HeaderAD from "../components/header";
 import axios from "axios";
 import { BASE_URL } from "../config/api";
+import { useNavigation } from "@react-navigation/native";
 export default function AddArcade() {
   const [arcadeLocation, setArcadeLocation] = useState({});
   const [userLocation, setUserLocation] = useState({});
-
+  const navigation = useNavigation();
   const requestLocationPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
@@ -78,6 +79,8 @@ export default function AddArcade() {
     };
     try {
       const response = await axios.post(`${BASE_URL}/arcades`, data);
+      navigation.navigate("Arcade List");
+      dispatch(fetchArcade);
       console.log("Arcade data submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting arcade data:", error);

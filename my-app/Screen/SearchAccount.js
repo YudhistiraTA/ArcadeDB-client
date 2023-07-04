@@ -9,8 +9,10 @@ import {
   FlatList,
 } from "react-native";
 import { BASE_URL } from "../config/api";
-
+import HeaderAD from "../components/header";
+import { useNavigation } from "@react-navigation/native";
 const SearchAccount = () => {
+  const Navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState([]);
   const [originalUsers, setOriginalUsers] = useState([]);
@@ -43,11 +45,10 @@ const SearchAccount = () => {
   };
 
   const handleDetail = (id) => {
-    // Handle navigation to user profile details
+    Navigation.navigate("VisitAccount");
   };
 
   const handleSearch = () => {
-    // Filter users based on searchQuery
     const filteredUsers = originalUsers.filter(
       (user) =>
         user.username &&
@@ -62,47 +63,51 @@ const SearchAccount = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search Friends..."
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
-        <TouchableOpacity style={styles.searchIcon} onPress={handleSearch}>
-          <Image
-            source={require("../assets/icon/searchIcon.png")}
-            style={styles.iconImage}
-          />
-        </TouchableOpacity>
+    <>
+      <View style={{ height: 90, width: "100%" }}>
+        <HeaderAD />
       </View>
-
-      <FlatList
-        data={users}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => handleDetail(item.id)}
-          >
-            {/* Render user profile picture based on user's id */}
+      <View style={styles.container}>
+        <View style={styles.searchContainer} onPress={handleDetail}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search Friends..."
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
+          />
+          <TouchableOpacity style={styles.searchIcon} onPress={handleSearch}>
             <Image
-              source={{
-                uri: profilePictures.find((profile) => profile.id === item.id)
-                  ?.imageUrl,
-              }}
-              style={styles.cardImage}
-              resizeMode="cover"
+              source={require("../assets/icon/searchIcon.png")}
+              style={styles.iconImage}
             />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>{item.username}</Text>
-            </View>
           </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.flatlistContent}
-      />
-    </View>
+        </View>
+
+        <FlatList
+          data={users}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => handleDetail(item.id)}
+            >
+              <Image
+                source={{
+                  uri: profilePictures.find((profile) => profile.id === item.id)
+                    ?.imageUrl,
+                }}
+                style={styles.cardImage}
+                resizeMode="cover"
+              />
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>{item.username}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          contentContainerStyle={styles.flatlistContent}
+        />
+      </View>
+    </>
   );
 };
 

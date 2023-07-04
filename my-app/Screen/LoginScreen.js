@@ -20,7 +20,7 @@ function LoginScreen() {
   const [password, setPassword] = useState("");
 
   const handleRegisterMenu = () => {
-    navigation.navigate("Create");
+    navigation.navigate("Register");
   };
 
   const handleLogin = async () => {
@@ -31,11 +31,8 @@ function LoginScreen() {
       });
       const token = response.data.token;
 
-      // Simpan token ke AsyncStorage
-      await AsyncStorage.setItem("token", token);
-      navigation.navigate("Home");
-
-      console.log(token);
+      await AsyncStorage.setItem("access_token", token);
+      navigation.navigate("Dashboard");
     } catch (error) {
       console.error(error);
     }

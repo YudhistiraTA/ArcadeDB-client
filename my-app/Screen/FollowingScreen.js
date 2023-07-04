@@ -12,7 +12,7 @@ import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
 import HeaderAD from "../components/header";
 
-const FollowerList = () => {
+const FollowingList = () => {
   const followers = [
     {
       username: "JohnDoe",
@@ -47,7 +47,7 @@ const FollowerList = () => {
         <HeaderAD />
       </View>
       <View style={styles.container}>
-        <Text style={styles.title}>Follower List</Text>
+        <Text style={styles.title}>Following List</Text>
         <ScrollView>
           {followers.map((follower, index) => (
             <TouchableOpacity key={index} activeOpacity={0.6}>
@@ -122,4 +122,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FollowerList;
+export default FollowingList;

@@ -13,6 +13,7 @@ import { useFonts } from "expo-font";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchGame, fetchArcade } from "../Reducer/game";
 import { ScrollView } from "react-native-gesture-handler";
+import HeaderAD from "../components/header";
 
 const GameList = () => {
   const games = useSelector((state) => state.games);
@@ -34,22 +35,29 @@ const GameList = () => {
   }
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
-          Game List
-        </Text>
-
-        {games[0]?.map((game) => (
-          <View style={[styles.card, { marginBottom: 30 }]} key={game.id}>
-            <Image source={{ uri: game.logoUrl }} style={styles.cardImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>{game.name}</Text>
-            </View>
-          </View>
-        ))}
+    <>
+      <View style={{ height: 90, width: "100%" }}>
+        <HeaderAD />
       </View>
-    </ScrollView>
+      <ScrollView>
+        <View style={styles.container}>
+          <Text
+            style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}
+          >
+            Game List
+          </Text>
+
+          {games[0]?.map((game) => (
+            <View style={[styles.card, { marginBottom: 30 }]} key={game.id}>
+              <Image source={{ uri: game.logoUrl }} style={styles.cardImage} />
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>{game.name}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </>
   );
 };
 

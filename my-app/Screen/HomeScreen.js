@@ -15,6 +15,7 @@ import * as Location from "expo-location";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchGame, fetchArcade } from "../Reducer/game";
 import HeaderAD from "../components/header";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 function HomeScreen() {
   const [userLocation, setUserLocation] = React.useState({});
   const recommendations = useSelector((state) => state.arcades);
@@ -25,6 +26,13 @@ function HomeScreen() {
     const handleFetchGame = async () => {
       await dispatch(fetchGame());
       await dispatch(fetchArcade());
+      AsyncStorage.getItem("access_token")
+        .then((token) => {
+          console.log(token);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     };
     handleFetchGame();
   }, []);
@@ -108,14 +116,14 @@ function HomeScreen() {
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handlePage("Followers")}>
+            <TouchableOpacity onPress={() => handlePage("UserSchedule")}>
               <View style={styles.square}>
                 <View
                   style={[styles.iconContainer, { backgroundColor: "#81ADB4" }]}
                 >
-                  <Ionicons name="people-outline" size={24} color="#FFFFFF" />
+                  <Ionicons name="calendar-outline" size={24} color="#FFFFFF" />
                 </View>
-                <Text style={styles.squareText}>Followers</Text>
+                <Text style={styles.squareText}>Schedule</Text>
               </View>
             </TouchableOpacity>
           </View>
