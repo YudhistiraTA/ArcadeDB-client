@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -14,12 +14,16 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchArcade, fetchArcadeGlobal } from "../Reducer/game";
 import { ScrollView } from "react-native-gesture-handler";
+
 const ScreenHeight = Dimensions.get("window").height;
+
 const ArcadeList = () => {
   const storeArcades = useSelector((state) => state.arcades);
   const [arcades, setArcades] = useState([]);
   const [cutArcades, setCutArcades] = useState([]);
   const [global, setGlobal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -32,20 +36,31 @@ const ArcadeList = () => {
     fetchData();
   }, []);
 
-  const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
 
   const handleDetail = (id) => {
     navigation.navigate("ArcadeDetail", { id });
   };
-  const handleGlobalSearch = async () => {
+
+  const handleGlobalSearch = () => {
     setGlobal(!global);
-    if (global) setArcades(storeArcades[0]);
-    else setArcades(cutArcades);
+    if (!global) {
+      setArcades(storeArcades[0]);
+      setCutArcades(storeArcades[0]);
+      setSearchResults([]);
+    } else {
+      const temp = storeArcades[0]?.filter((arcade) => arcade.distance < 10);
+      setArcades(temp);
+      setCutArcades(temp);
+      handleSearch();
+    }
   };
 
   const handleSearch = () => {
-    console.log("Search query:", searchQuery);
+    const results = cutArcades.filter((arcade) =>
+      arcade.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setSearchResults(results);
   };
 
   const [fontsLoaded] = useFonts({
@@ -89,41 +104,44 @@ const ArcadeList = () => {
             Global Search
           </Text>
         </TouchableOpacity>
-        {arcades?.map((arcade) => (
-          <TouchableOpacity
-            onPress={() => handleDetail(arcade.id)}
-            key={arcade.id}
-          >
-            <View style={styles.card}>
-              <Image
-                source={{ uri: arcade.Brand.imageUrl }}
-                style={styles.cardImage}
-              />
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText}>{arcade.name}</Text>
-                <Text style={styles.cardRating}>
-                  {arcade.rating === 0 || arcade.rating === 100
-                    ? "★★★★★"
-                    : null}
-
-                  {arcade.rating === 80 && "★★★★☆"}
-                  {arcade.rating === 60 && "★★★☆☆"}
-                  {arcade.rating === 40 && "★★☆☆☆"}
-                  {arcade.rating === 20 && "★☆☆☆☆"}
-                </Text>
+        {searchResults.length > 0 ? (
+          searchResults.map((arcade) => (
+            <TouchableOpacity
+              onPress={() => handleDetail(arcade.id)}
+              key={arcade.id}
+            >
+              <View style={styles.card}>
+                <Image
+                  source={{ uri: arcade.Brand.imageUrl }}
+                  style={styles.cardImage}
+                />
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardText}>{arcade.name}</Text>
+                  <Text style={styles.cardRating}>
+                    {arcade.rating === 0 || arcade.rating === 100
+                      ? "★★★★★"
+                      : null}
+                    {arcade.rating === 80 && "★★★★☆"}
+                    {arcade.rating === 60 && "★★★☆☆"}
+                    {arcade.rating === 40 && "★★☆☆☆"}
+                    {arcade.rating === 20 && "★☆☆☆☆"}
+                  </Text>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        ))}
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={styles.noResultsText}>No results found</Text>
+        )}
       </View>
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#FDF3E6",
     padding: 16,
-    // height: ScreenHeight,
   },
   searchContainer: {
     marginTop: 10,
@@ -171,7 +189,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginTop: -100,
     marginBottom: 150,
-    elevation: 4, // Tambahkan elevation untuk efek bayangan
+    elevation: 4,
   },
   cardImage: {
     width: "100%",
@@ -192,7 +210,13 @@ const styles = StyleSheet.create({
   cardRating: {
     fontSize: 14,
     color: "#FFD700",
-    marginBottom: 8, // Tambahkan margin bottom pada rating
+    marginBottom: 8,
+  },
+  noResultsText: {
+    fontSize: 14,
+    color: "red",
+    marginTop: 10,
+    fontFamily: "PressStart2P_400Regular",
   },
 });
 

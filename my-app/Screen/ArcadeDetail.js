@@ -24,6 +24,7 @@ const ArcadeDetail = ({ route }) => {
   const { id } = route.params;
 
   const arcadesDetail = useSelector((state) => state.arcadesDetail);
+  // const [arcadesDetail, setArcadesDetail] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -32,6 +33,13 @@ const ArcadeDetail = ({ route }) => {
       await dispatch(fetchArcadeDetail(id));
     };
     handleArcadeDetail(id);
+    const handleArcadeDetail2 = async (id) => {
+      const { data } = await axios.get(`${BASE_URL}/detail/${id}`);
+      console.log(data.Session, "<<<<<<<<<ini data");
+      console.log(data.Session.length, "<<<<<<<<<ini data");
+    };
+    handleArcadeDetail(id);
+    handleArcadeDetail2(id);
     fetchBookmarks();
   }, [id]);
 
@@ -161,6 +169,9 @@ const ArcadeDetail = ({ route }) => {
             <Text style={styles.arcadeName}>
               {arcadesDetail.find((arcade) => arcade.id === id)?.name || ""}
             </Text>
+            <Text style={styles.arcadeName}>
+              {arcadesDetail.find((arcade) => arcade.id === id)?.id || ""}
+            </Text>
             <View style={styles.rateContainer}>
               <Text style={styles.rateText}>
                 {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
@@ -213,7 +224,7 @@ const ArcadeDetail = ({ route }) => {
               <Text style={styles.rateButtonText}>Rate</Text>
             </TouchableOpacity>
           </View>
-          {/* <Text>{JSON.stringify(arcadesDetail[1].ArcadeGame)}</Text> */}
+          {/* <Text>{JSON.stringify(arcadesDetail)}</Text> */}
           {Object.entries(arcadesDetail[0]?.Session).map(([key, value]) => (
             <View key={key} style={styles.circleContainer}>
               {value.map((user, index) => (
@@ -224,7 +235,8 @@ const ArcadeDetail = ({ route }) => {
                 />
               ))}
               <Text style={{ marginLeft: 100 }}>
-                {value.map((user) => user.User).join(" and ")} playing on {key}
+                {value.map((user) => JSON.stringify(user.User)).join(" and ")}{" "}
+                playing on {key}
               </Text>
             </View>
           ))}

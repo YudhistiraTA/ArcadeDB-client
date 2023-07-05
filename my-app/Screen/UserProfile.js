@@ -21,7 +21,7 @@ import { fetchBrand } from "../Reducer/game";
 import { BASE_URL } from "../config/api";
 import { WebView } from "react-native-webview";
 import axios from "axios";
-import * as Linking from "expo-linking";
+// import * as Linking from "expo-linking";
 
 Linking.addEventListener();
 // import MidtransPayment from "react-native-midtrans-payment";
@@ -93,6 +93,9 @@ const UserProfile = () => {
       }
     });
   };
+  const handleCloseMidtrans = () => {
+    navigation("Dashboard");
+  };
 
   const clearAccessToken = async () => {
     try {
@@ -125,6 +128,7 @@ const UserProfile = () => {
         // Step 1: Get Midtrans Token from your server using GET request
         const { data } = await axios.get(`${BASE_URL}/midtrans`, config);
         const { redirect_url } = data;
+        console.log(data, "<<<<<<<<<<<<<<Midtans server");
         setSubProcess({
           ...subProcess,
           pending: true,
@@ -170,10 +174,20 @@ const UserProfile = () => {
   };
   if (subProcess.pending) {
     return (
-      <WebView
-        source={{ uri: subProcess.redirect_url }}
-        style={{ marginTop: 20 }}
-      ></WebView>
+      <>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.button, styles.subscriptionButton]}
+            onPress={handleCloseMidtrans}
+          >
+            <Text style={styles.buttonText}>{JSON.stringify(subProcess)}</Text>
+          </TouchableOpacity>
+        </View>
+        <WebView
+          source={{ uri: subProcess.redirect_url }}
+          style={{ marginTop: 20 }}
+        ></WebView>
+      </>
     );
   }
   return (

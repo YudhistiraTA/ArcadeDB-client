@@ -1,16 +1,25 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet, Image, Text, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import {
   useFonts,
   PressStart2P_400Regular,
 } from "@expo-google-fonts/press-start-2p";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchGame } from "../Reducer/game";
+import { fetchArcade, fetchGame } from "../Reducer/game";
 import HeaderAD from "../components/header";
+import { useNavigation } from "@react-navigation/native";
 
 const GameList = () => {
   const games = useSelector((state) => state.games);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const handleFetchGame = async () => {
@@ -26,6 +35,12 @@ const GameList = () => {
   if (!fontsLoaded) {
     return null;
   }
+
+  const handleCardPress = (gameId) => {
+    // Navigasi ke halaman ArcadeList dengan game ID sebagai parameter
+    navigation.navigate("Arcade List", { gameId });
+    dispatch(fetchArcade);
+  };
 
   return (
     <>
@@ -45,7 +60,11 @@ const GameList = () => {
             </Text>
 
             {games[0]?.map((game) => (
-              <View style={styles.card} key={game.id}>
+              <TouchableOpacity
+                style={styles.card}
+                key={game.id}
+                onPress={() => handleCardPress(game.id)}
+              >
                 <Image
                   source={{ uri: game.logoUrl }}
                   style={styles.cardImage}
@@ -56,7 +75,7 @@ const GameList = () => {
                   <Text style={styles.cardText}>{game.genre}</Text>
                   <Text style={styles.cardText}>{game.platform}</Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>

@@ -50,10 +50,9 @@ const BookmarkList = () => {
 
   return (
     <>
-      <View style={{ height: 90, width: "100%" }}></View>
       <View style={styles.container}>
         <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
-          Bookmark List {JSON.stringify(bookmarks)}
+          Bookmark List
         </Text>
 
         <FlatList
@@ -81,13 +80,13 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
+    marginTop: 50,
     color: "#6F6B65",
     fontSize: 16,
-    fontWeight: "bold",
     marginBottom: 16,
   },
   card: {
-    width: 300,
+    width: "100%",
     height: 200,
     borderRadius: 15,
     backgroundColor: "#FFFFFF",
