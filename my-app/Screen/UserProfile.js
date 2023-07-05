@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,18 +7,23 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  Linking,
+  Platform,
 } from "react-native";
 import ImagePicker from "react-native-image-picker";
 import userImage from "../assets/image/user3.png";
 import bannerImage from "../assets/image/imagesArcade.png";
 import HeaderAD from "../components/header";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBrand } from "../Reducer/game";
 import { BASE_URL } from "../config/api";
 import { WebView } from "react-native-webview";
 import axios from "axios";
+import * as Linking from "expo-linking";
+
+Linking.addEventListener();
 // import MidtransPayment from "react-native-midtrans-payment";
 
 const UserProfile = () => {
@@ -42,6 +47,15 @@ const UserProfile = () => {
   useEffect(() => {
     dispatch(fetchBrand());
   }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setSubProcess({
+        ...subProcess,
+        pending: false,
+      });
+      console.log(subProcess);
+    }, [])
+  );
   const handlePage = (page) => {
     navigation.navigate(page);
   };
@@ -154,13 +168,14 @@ const UserProfile = () => {
       console.log("Error purchasing subscription", error);
     }
   };
-  if (subProcess.pending)
+  if (subProcess.pending) {
     return (
       <WebView
         source={{ uri: subProcess.redirect_url }}
         style={{ marginTop: 20 }}
       ></WebView>
     );
+  }
   return (
     <>
       <View style={{ height: 90, width: "100%" }}>
