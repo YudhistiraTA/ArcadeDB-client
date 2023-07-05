@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,56 +11,62 @@ import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
 import HeaderAD from "../components/header";
+import axios from "axios";
+import { BASE_URL } from "../config/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FollowerList = () => {
-  const followers = [
-    {
-      username: "JohnDoe",
-      fullName: "John Doe",
-      profilePicture: require("../assets/image/user1.png"),
-    },
-    {
-      username: "JaneSmith",
-      fullName: "Jane Smith",
-      profilePicture: require("../assets/image/user2.png"),
-    },
-    {
-      username: "MikeJohnson",
-      fullName: "Mike Johnson",
-      profilePicture: require("../assets/image/user3.png"),
-    },
-    // Add more followers as needed
-  ];
+  const [followers, setFollowers] = useState([]);
+
+  const fetchFollowers = async () => {
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+      const response = await axios.get(`${BASE_URL}/follower`, {
+        headers: {
+          access_token: token,
+        },
+      });
+      const data = response.data;
+
+      setFollowers(data);
+    } catch (error) {
+      console.error("Error fetching followers:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFollowers();
+  }, []);
 
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
 
   const Navigation = useNavigation();
+
   if (!fontsLoaded) {
     return null;
   }
 
   return (
     <>
-      <View style={{ height: 90, width: "100%" }}>
-        <HeaderAD />
-      </View>
       <View style={styles.container}>
-        <Text style={styles.title}>Follower List</Text>
         <ScrollView>
-          {followers.map((follower, index) => (
+          <Text style={styles.title}>Your Followers</Text>
+          {followers?.map((follower, index) => (
             <TouchableOpacity key={index} activeOpacity={0.6}>
               <View style={styles.followerContainer}>
                 <View style={styles.profilePictureContainer}>
                   <Image
-                    source={follower.profilePicture}
+                    source={{ uri: follower.Follower.ProfilePicture.imageUrl }}
                     style={styles.profilePicture}
                   />
                 </View>
                 <View style={styles.followerContent}>
-                  <Text style={styles.username}>{follower.username}</Text>
-                  <Text style={styles.fullName}>{follower.fullName}</Text>
+                  <Text style={styles.username}>
+                    {follower.Follower.username}
+                  </Text>
+                  {/* Add more information about the follower if needed */}
                 </View>
               </View>
               {index < followers.length - 1 && (
@@ -82,19 +88,22 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 16,
     fontFamily: "PressStart2P_400Regular",
+    marginTop: 50,
+    textAlign: "center",
   },
   followerContainer: {
     flexDirection: "row",
     alignItems: "center",
+    paddingVertical: 10,
   },
   profilePictureContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     overflow: "hidden",
     marginRight: 16,
   },
@@ -106,20 +115,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   username: {
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: "bold",
     marginBottom: 4,
-  },
-  fullName: {
-    fontSize: 12,
-    color: "#555555",
   },
   separator: {
     borderBottomWidth: 1,
     borderBottomColor: "#555555",
-    marginTop: 10,
-    marginBottom: 10,
+    marginVertical: 10,
   },
 });
-
 export default FollowerList;

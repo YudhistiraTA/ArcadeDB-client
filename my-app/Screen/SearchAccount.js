@@ -45,7 +45,8 @@ const SearchAccount = () => {
   };
 
   const handleDetail = (id) => {
-    Navigation.navigate("VisitAccount");
+    Navigation.navigate("VisitAccount", id);
+    console.log(id);
   };
 
   const handleSearch = () => {
@@ -64,9 +65,6 @@ const SearchAccount = () => {
 
   return (
     <>
-      <View style={{ height: 90, width: "100%" }}>
-        <HeaderAD />
-      </View>
       <View style={styles.container}>
         <View style={styles.searchContainer} onPress={handleDetail}>
           <TextInput
@@ -121,6 +119,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
+    marginTop: 50,
   },
   searchInput: {
     flex: 1,

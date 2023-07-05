@@ -1,31 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import userImage from "../assets/image/user3.png";
 import bannerImage from "../assets/image/imagesArcade.png";
 import HeaderAD from "../components/header";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import axios from "axios";
+import { BASE_URL } from "../config/api";
 const OtherProfile = () => {
   const navigation = useNavigation();
   const handlePage = (page) => {
     navigation.navigate(page);
   };
-  const handleFollow = () => {
-    console.log("first");
+  const route = useRoute();
+  const [userData, setUserData] = useState({}); // Tambah state userData
+  const [profilePicture, setProfilePicture] = useState({});
+  const id = route.params;
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+  const fetchUserData = async () => {
+    try {
+      const id = route.params;
+      const token = await AsyncStorage.getItem("access_token");
+      const response = await axios.get(`${BASE_URL}/users/${id}`, {
+        headers: { access_token: token },
+      });
+      setUserData(response.data);
+      await setProfilePicture(response.data.ProfilePicture);
+      console.log(response.data, "iiasd");
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+  const handleFollow = async (id) => {
+    try {
+      // const { id: FollowedId } = route.params; // Ambil id dari parameter rute
+      const token = await AsyncStorage.getItem("access_token");
+      const response = await axios.post(`${BASE_URL}/follow/${id}`, null, {
+        headers: { access_token: token },
+      });
+      console.log(response.data); // Outputkan respons dari server
+      // Lakukan tindakan lain setelah mengikuti pengguna
+    } catch (error) {
+      console.error("Error following user:", error);
+    }
   };
   const handleChat = () => {
     console.log("Chat button pressed");
   };
   const handlePressMessage = () => {
-    navigation.navigate("Message", {});
+    navigation.navigate("Message", { id });
   };
 
   return (
     <>
-      <View style={{ height: 90, width: "100%" }}>
-        <HeaderAD />
-      </View>
       <View style={styles.container}>
         <View style={styles.bannerContainer}>
           <Image source={bannerImage} style={styles.bannerImage} />
@@ -33,32 +63,37 @@ const OtherProfile = () => {
         <View style={styles.profileContainer}>
           <View style={styles.profileCard}>
             <View style={styles.profileImageContainer}>
-              <Image source={userImage} style={styles.profileImage} />
+              <Image
+                source={{ uri: profilePicture.imageUrl }}
+                style={styles.profileImage}
+              />
             </View>
             <View style={styles.profileInfo}>
               <Text style={styles.profileName} numberOfLines={2}>
-                Bagas Tama Putra
+                {userData.username} {/* Tampilkan nama pengguna */}
               </Text>
               <View style={styles.statsContainer}>
                 <TouchableOpacity
                   style={styles.stat}
                   onPress={() => handlePage("Follower")}
                 >
-                  <Text style={styles.statValue}>1k</Text>
+                  <Text style={styles.statValue}>{userData.followerCount}</Text>
                   <Text style={styles.statLabel}>Followers</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.stat}
                   onPress={() => handlePage("Following")}
                 >
-                  <Text style={styles.statValue}>1.5k</Text>
+                  <Text style={styles.statValue}>
+                    {userData.followingCount}
+                  </Text>
                   <Text style={styles.statLabel}>Following</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={[styles.button, styles.followButton]}
-                  onPress={handleFollow}
+                  onPress={() => handleFollow(id)}
                 >
                   <Text style={styles.buttonText}>Follow</Text>
                 </TouchableOpacity>
@@ -95,6 +130,7 @@ const styles = StyleSheet.create({
     height: 200,
     backgroundColor: "#1877F2",
     marginBottom: 20,
+    marginTop: 50,
   },
   bannerImage: {
     flex: 1,
