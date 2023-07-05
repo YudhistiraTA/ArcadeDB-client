@@ -10,14 +10,19 @@ import {
   Modal,
   TextInput,
   Button,
+  Platform,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import DatePicker from "react-native-datepicker";
+
 import { fetchArcade, fetchArcadeDetail } from "../Reducer/game";
 import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL } from "../config/api";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DatePickerIOS } from "react-native";
+import { Calendar } from "react-native-calendars";
+import { Alert } from "react-native";
+
 const { width, height } = Dimensions.get("window");
 
 const ArcadeDetail = ({ route }) => {
@@ -33,36 +38,83 @@ const ArcadeDetail = ({ route }) => {
       await dispatch(fetchArcadeDetail(id));
     };
     handleArcadeDetail(id);
-    const handleArcadeDetail2 = async (id) => {
-      const { data } = await axios.get(`${BASE_URL}/detail/${id}`);
-      console.log(data.Session, "<<<<<<<<<ini data");
-      console.log(data.Session.length, "<<<<<<<<<ini data");
-    };
-    handleArcadeDetail(id);
-    handleArcadeDetail2(id);
+
     fetchBookmarks();
   }, [id]);
 
   const arcade = arcadesDetail.find((arcade) => arcade.id === id);
   const initialLatitude = arcade ? arcade.lat : -6.2088;
   const initialLongitude = arcade ? arcade.lng : 106.8456;
-
+  const [visible, setVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
   const [selectedRating, setSelectedRating] = useState(0);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
 
   const handleBookButton = () => {
     setModalVisible(true);
+  };
+  const handleConfirmationModalOpen = () => {
+    setConfirmationModalVisible(true);
+  };
+
+  const handleConfirmationModalClose = () => {
+    setConfirmationModalVisible(false);
+  };
+
+  const handleConfirmationYes = async (arcadeGameId) => {
+    // Handle the 'Yes' button action here
+    console.log("ayo");
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+      const response = await axios.post(
+        `${BASE_URL}/report/${arcadeGameId}`,
+        {},
+        {
+          headers: {
+            access_token: token,
+          },
+        }
+      );
+
+      if (response.data.reportCount >= 5) {
+        Alert.alert(
+          "Game Deletion",
+          "This game has received 5 or more reports and will be deleted.",
+          [{ text: "OK", onPress: () => deleteGame() }]
+        );
+      } else {
+        Alert.alert("Success", "Report submitted successfully.");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "An error occurred while submitting the report.");
+    }
+
+    // After handling the action, close the modal
+    setConfirmationModalVisible(false);
+  };
+
+  const handleConfirmationNo = () => {
+    // Handle the 'No' button action here
+    // ...
+    // After handling the action, close the modal
+    setConfirmationModalVisible(false);
   };
 
   const handleModalClose = () => {
     setModalVisible(false);
   };
 
+  // const handleDateChange = (date) => {
+  //   setSelectedDate(date);
+  //   console.log(date,'ini date')
+  // };
   const handleDateChange = (date) => {
-    setSelectedDate(date);
+    setSelectedDate(date.dateString);
   };
 
   const handleRateButton = () => {
@@ -86,6 +138,8 @@ const ArcadeDetail = ({ route }) => {
         { rating },
         config
       );
+
+      console.log(config);
       console.log("Rating submitted successfully");
       setRatingModalVisible(false);
     } catch (error) {
@@ -144,6 +198,39 @@ const ArcadeDetail = ({ route }) => {
     }
   };
 
+  const handleBook = async () => {
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+
+      if (token) {
+        const config = {
+          headers: {
+            access_token: token,
+          },
+        };
+
+        const response = await axios.post(
+          `${BASE_URL}/session/add/${id}`,
+          {
+            date: selectedDate, // Pass the selected date to the request body
+          },
+          config
+        );
+
+        // Handle the response, such as showing a success message or navigating to a different screen
+        console.log("Session added successfully", response.data);
+        a++;
+        await dispatch(fetchArcadeDetail(id));
+      } else {
+        console.log("Token not found");
+        // Handle the case when the token is not available in AsyncStorage
+      }
+    } catch (error) {
+      console.log("Error adding session", error);
+      // Handle any errors that occur during the session addition
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container} key={arcadesDetail[0]?.id}>
@@ -174,21 +261,20 @@ const ArcadeDetail = ({ route }) => {
             </Text>
             <View style={styles.rateContainer}>
               <Text style={styles.rateText}>
-                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
-                  0 ||
-                arcadesDetail.find((arcade) => arcade.id === id)?.rating === 100
-                  ? "★★★★★"
-                  : null}
-                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
-                  100 && "★★★★★"}
-                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
-                  80 && "★★★★☆"}
-                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
-                  60 && "★★★☆☆"}
-                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
-                  40 && "★★☆☆☆"}
-                {arcadesDetail.find((arcade) => arcade.id === id)?.rating ===
-                  20 && "★☆☆☆☆"}
+                {(() => {
+                  const rating = arcadesDetail.find(
+                    (arcade) => arcade.id === id
+                  )?.rating;
+
+                  if (rating === 5) return "★★★★★";
+                  if (rating === 4) return "★★★★☆";
+                  if (rating === 3) return "★★★☆☆";
+                  if (rating === 2) return "★★☆☆☆";
+                  if (rating === 1) return "★☆☆☆☆";
+                  if (rating === 0 || rating === null) return "★★★★★";
+
+                  return null;
+                })()}
               </Text>
             </View>
           </View>
@@ -200,6 +286,7 @@ const ArcadeDetail = ({ route }) => {
             >
               <Text style={styles.buttonText}>Book</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               onPress={addBookmark}
               style={
@@ -224,25 +311,30 @@ const ArcadeDetail = ({ route }) => {
               <Text style={styles.rateButtonText}>Rate</Text>
             </TouchableOpacity>
           </View>
-          {/* <Text>{JSON.stringify(arcadesDetail)}</Text> */}
-          {Object.entries(arcadesDetail[0]?.Session).map(([key, value]) => (
-            <View key={key} style={styles.circleContainer}>
-              {value.map((user, index) => (
-                <Image
-                  key={index}
-                  source={require("../assets/image/user1.png")}
-                  style={[styles.circle, styles[`circle${index + 1}`]]}
-                />
-              ))}
-              <Text style={{ marginLeft: 100 }}>
-                {value.map((user) => JSON.stringify(user.User)).join(" and ")}{" "}
-                playing on {key}
-              </Text>
-            </View>
-          ))}
+
+          {Object.entries(arcade?.Session)
+            .slice(0, 7)
+            .map(([key, value]) => (
+              <View key={key} style={styles.circleContainer}>
+                {/* <Text>{JSON.stringify(arcadesDetail)}</Text> */}
+                {value.map((user, index) => (
+                  <Image
+                    key={index}
+                    source={require("../assets/image/images.jpeg")}
+                    style={[styles.circle, styles[`circle${index + 1}`]]}
+                  />
+                ))}
+                <Text style={{ marginLeft: 50 }}>
+                  {value
+                    .map((user) => JSON.stringify(user.User.username))
+                    .join(" and ")}{" "}
+                  playing on {key}
+                </Text>
+              </View>
+            ))}
         </View>
         <View style={[styles.smallSquareRow, styles.smallCardRow]}>
-          {arcadesDetail[1]?.ArcadeGame?.map((arcade) => (
+          {arcade?.ArcadeGame?.map((arcade) => (
             <View
               key={arcade.Game.id}
               style={[styles.smallCard, styles.smallCardMargin]}
@@ -254,7 +346,7 @@ const ArcadeDetail = ({ route }) => {
               <Text style={{ textAlign: "center" }}>{arcade.Game.name}</Text>
               <TouchableOpacity
                 style={styles.rateGameButton}
-                onPress={handleRateButton}
+                onPress={handleConfirmationModalOpen}
               >
                 <Text style={styles.rateButton2Text}>Inacurate</Text>
               </TouchableOpacity>
@@ -270,18 +362,49 @@ const ArcadeDetail = ({ route }) => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalText}>Select Date:</Text>
-              <TextInput
-                keyboardType="numeric"
-                style={styles.input}
-                placeholder="YYYY-MM-DD"
-                value={selectedDate}
-                onChangeText={handleDateChange}
+              {/* {renderDatePicker()} */}
+              <Calendar
+                onDayPress={handleDateChange}
+                markedDates={{
+                  [selectedDate]: { selected: true, selectedColor: "blue" },
+                }}
               />
+              <Button title="Book" onPress={handleBook} />
               <Button title="Close" onPress={handleModalClose} />
             </View>
           </View>
         </Modal>
+        <Modal
+          visible={confirmationModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={handleConfirmationModalClose}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                {" "}
+                is this game unavailable here?
+              </Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => handleConfirmationYes(id)}
+                >
+                  <Text style={styles.buttonText}>Yes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleConfirmationNo}
+                >
+                  <Text style={styles.buttonText}>No</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Button to open the modal */}
 
         <Modal
           visible={ratingModalVisible}
@@ -416,7 +539,8 @@ const styles = StyleSheet.create({
   circleContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 50,
+    marginBottom: 10,
   },
   circle: {
     width: 45,
@@ -527,7 +651,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
-
     borderColor: "black",
     alignSelf: "flex-start",
   },

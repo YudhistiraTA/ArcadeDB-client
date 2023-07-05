@@ -17,6 +17,9 @@ const OtherProfile = () => {
   const handleChat = () => {
     console.log("Chat button pressed");
   };
+  const handlePressMessage = () => {
+    navigation.navigate("Message", {});
+  };
 
   return (
     <>
@@ -63,7 +66,12 @@ const OtherProfile = () => {
                   style={[styles.button, styles.chatButton]}
                   onPress={handleChat}
                 >
-                  <Text style={styles.buttonText}>Chat</Text>
+                  <Text
+                    style={styles.buttonText}
+                    onPress={() => handlePressMessage()}
+                  >
+                    Chat
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>

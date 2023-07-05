@@ -88,7 +88,7 @@ function HomeScreen() {
       <View style={styles.container}>
         {/* Header */}
         <Image
-          source={require("../assets/image/arcadeImage.jpg")}
+          source={require("../assets/image/arcadeImage2.png")}
           style={styles.wallpaper}
         />
 
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
   square: {
     width: 90,
     height: 70,
-    backgroundColor: "#FBC934",
+    backgroundColor: "#8EDBE4",
     borderRadius: 10,
     paddingHorizontal: 10,
     elevation: 20,

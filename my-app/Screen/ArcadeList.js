@@ -47,7 +47,8 @@ const ArcadeList = () => {
     if (!global) {
       setArcades(storeArcades[0]);
       setCutArcades(storeArcades[0]);
-      setSearchResults([]);
+      const temp = storeArcades[0]?.filter((arcade) => arcade.distance < 10);
+      setSearchResults(temp);
     } else {
       const temp = storeArcades[0]?.filter((arcade) => arcade.distance < 10);
       setArcades(temp);
@@ -125,6 +126,9 @@ const ArcadeList = () => {
                     {arcade.rating === 60 && "★★★☆☆"}
                     {arcade.rating === 40 && "★★☆☆☆"}
                     {arcade.rating === 20 && "★☆☆☆☆"}
+                  </Text>
+                  <Text style={styles.cardDistance}>
+                    {Math.floor(arcade.distance)} km
                   </Text>
                 </View>
               </View>

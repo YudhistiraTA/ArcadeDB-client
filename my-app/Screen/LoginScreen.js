@@ -33,10 +33,9 @@ function LoginScreen() {
       const token = response.data.token;
       const premium = response.data.premium;
       const id = response.data.id;
-
       await AsyncStorage.setItem("access_token", token);
-      await AsyncStorage.setItem("premium", premium);
-      await AsyncStorage.setItem("id", id);
+      await AsyncStorage.setItem("premium", JSON.stringify(premium));
+      await AsyncStorage.setItem("id", JSON.stringify(id));
       navigation.navigate("Dashboard");
     } catch (error) {
       console.error(error);
