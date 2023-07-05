@@ -1,21 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Text, FlatList, Image } from "react-native";
 import {
-  View,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  Image,
-} from "react-native";
-import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
+  useFonts,
+  PressStart2P_400Regular,
+} from "@expo-google-fonts/press-start-2p";
 import arcadeImage from "../assets/image/imagesArcade.png";
-import { useFonts } from "expo-font";
 import HeaderAD from "../components/header";
+import axios from "axios";
+import { BASE_URL } from "../config/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BookmarkList = () => {
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
+  const [bookmarks, setBookmarks] = useState([]);
+
+  useEffect(() => {
+    fetchBookmarks();
+  }, []);
+
+  const fetchBookmarks = async () => {
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+
+      if (token) {
+        const config = {
+          headers: {
+            access_token: token,
+          },
+        };
+
+        const response = await axios.get(`${BASE_URL}/bookmarks`, config);
+
+        setBookmarks(response.data.Bookmark);
+      } else {
+        console.log("Token not found");
+        // Handle the case when the token is not available in AsyncStorage
+      }
+    } catch (error) {
+      console.log("Error fetching bookmarks", error);
+      // Handle any errors that occur during the fetch
+    }
+  };
 
   if (!fontsLoaded) {
     return null;
@@ -23,21 +50,25 @@ const BookmarkList = () => {
 
   return (
     <>
-      <View style={{ height: 90, width: "100%" }}>
-        <HeaderAD />
-      </View>
+      <View style={{ height: 90, width: "100%" }}></View>
       <View style={styles.container}>
         <Text style={[styles.title, { fontFamily: "PressStart2P_400Regular" }]}>
-          Bookmark List
+          Bookmark List {JSON.stringify(bookmarks)}
         </Text>
 
-        <View style={[styles.card, { marginBottom: 30 }]}>
-          <Image source={arcadeImage} style={styles.cardImage} />
-          <View style={styles.cardContent}>
-            <Text style={styles.cardText}>The Breeze, Taangerang</Text>
-            <Text style={styles.cardText}>☆☆☆☆☆</Text>
-          </View>
-        </View>
+        <FlatList
+          data={bookmarks}
+          keyExtractor={(item) => item.Arcade.id.toString()}
+          renderItem={({ item }) => (
+            <View style={[styles.card, { marginBottom: 30 }]}>
+              <Image source={arcadeImage} style={styles.cardImage} />
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>{item.Arcade.name}</Text>
+                <Text style={styles.cardText}>☆☆☆☆☆</Text>
+              </View>
+            </View>
+          )}
+        />
       </View>
     </>
   );

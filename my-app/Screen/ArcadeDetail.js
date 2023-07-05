@@ -32,6 +32,7 @@ const ArcadeDetail = ({ route }) => {
       await dispatch(fetchArcadeDetail(id));
     };
     handleArcadeDetail(id);
+    fetchBookmarks();
   }, [id]);
 
   const arcade = arcadesDetail.find((arcade) => arcade.id === id);
@@ -64,14 +65,51 @@ const ArcadeDetail = ({ route }) => {
     setRatingModalVisible(false);
   };
 
-  const handleRatingSelect = (rating) => {
-    setSelectedRating(rating);
-    setRatingModalVisible(false);
+  const handleRatingSelect = async (rating) => {
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+      const config = {
+        headers: {
+          access_token: token,
+        },
+      };
+      const response = await axios.post(
+        `${BASE_URL}/rate/${id}`,
+        { rating },
+        config
+      );
+      console.log("Rating submitted successfully");
+      setRatingModalVisible(false);
+    } catch (error) {
+      console.log("Error submitting rating", error);
+    }
+  };
+  const [bookmarks, setBookmarks] = useState([]);
+  const fetchBookmarks = async () => {
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+
+      if (token) {
+        const config = {
+          headers: {
+            access_token: token,
+          },
+        };
+
+        const response = await axios.get(`${BASE_URL}/bookmarks`, config);
+
+        setBookmarks(response.data.Bookmark);
+      } else {
+        console.log("Token not found");
+      }
+    } catch (error) {
+      console.log("Error fetching bookmarks", error);
+    }
   };
 
   const addBookmark = async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
+      const token = await AsyncStorage.getItem("access_token");
 
       if (token) {
         const config = {
@@ -87,6 +125,7 @@ const ArcadeDetail = ({ route }) => {
         );
         // Handle the response, update the bookmark state, or perform any other necessary actions
         console.log("Bookmark added successfully");
+        setIsBookmarked(true);
       } else {
         // Handle the case when the token is not available in AsyncStorage
         console.log("Token not found");
@@ -174,6 +213,7 @@ const ArcadeDetail = ({ route }) => {
               <Text style={styles.rateButtonText}>Rate</Text>
             </TouchableOpacity>
           </View>
+          {/* <Text>{JSON.stringify(arcadesDetail[1].ArcadeGame)}</Text> */}
           {Object.entries(arcadesDetail[0]?.Session).map(([key, value]) => (
             <View key={key} style={styles.circleContainer}>
               {value.map((user, index) => (
@@ -190,7 +230,7 @@ const ArcadeDetail = ({ route }) => {
           ))}
         </View>
         <View style={[styles.smallSquareRow, styles.smallCardRow]}>
-          {arcadesDetail[0]?.ArcadeGame?.map((arcade) => (
+          {arcadesDetail[1]?.ArcadeGame?.map((arcade) => (
             <View
               key={arcade.Game.id}
               style={[styles.smallCard, styles.smallCardMargin]}
@@ -402,20 +442,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignSelf: "center",
+    overflow: "hidden",
   },
-  smallCardRow: {
-    marginBottom: 10,
+  smallSquareRow: {
+    width: "90%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignSelf: "center",
+    flexWrap: "wrap",
   },
   smallCard: {
     width: "45%",
-    height: "100%",
+    height: 120,
     backgroundColor: "white",
     borderWidth: 2,
     borderColor: "black",
     paddingTop: 10,
-  },
-  smallCardMargin: {
-    marginRight: 0,
+    marginBottom: 10,
   },
   smallCardImage: {
     width: "100%",
@@ -469,6 +512,20 @@ const styles = StyleSheet.create({
   },
   bookmarkButton: {
     backgroundColor: "#FDF3E6",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+
+    borderColor: "black",
+    alignSelf: "flex-start",
+  },
+  bookmarkTextActive: {
+    color: "red", // Ubah warna teks sesuai kebutuhan Anda
+    fontSize: 14, // Ubah ukuran teks sesuai kebutuhan Anda
+    fontWeight: "bold", // Ubah gaya teks sesuai kebutuhan Anda
+  },
+  bookmarkButtonActive: {
+    backgroundColor: "green",
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,

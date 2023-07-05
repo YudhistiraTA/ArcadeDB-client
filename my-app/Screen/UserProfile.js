@@ -16,6 +16,10 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBrand } from "../Reducer/game";
+import { BASE_URL } from "../config/api";
+import { WebView } from "react-native-webview";
+import axios from "axios";
+// import MidtransPayment from "react-native-midtrans-payment";
 
 const UserProfile = () => {
   const [selectedLogo, setSelectedLogo] = useState("");
@@ -23,7 +27,14 @@ const UserProfile = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [newUsername, setNewUsername] = useState("");
   const [profilePicture, setProfilePicture] = useState(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subProcess, setSubProcess] = useState({
+    pending: false,
+    paid: false,
+    redirect_url: null,
+  });
   const brands = useSelector((state) => state.brands);
+
   const dispatch = useDispatch();
   const handleLogoChange = (logo) => {
     setSelectedLogo(logo);
@@ -43,6 +54,31 @@ const UserProfile = () => {
     // Code to save the updated user profile
     setModalVisible(false);
   };
+  const handleProfileImagePress = () => {
+    setModalVisible(true);
+  };
+  const handleSelectProfileImage = () => {
+    const options = {
+      title: "Select Profile Image",
+      storageOptions: {
+        skipBackup: true,
+        path: "images",
+      },
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+        console.log("User cancelled image picker");
+      } else if (response.error) {
+        console.log("ImagePicker Error: ", response.error);
+      } else if (response.customButton) {
+        console.log("User tapped custom button: ", response.customButton);
+      } else {
+        // Set the selected image as profilePicture state
+        setProfilePicture(response.uri);
+      }
+    });
+  };
 
   const clearAccessToken = async () => {
     try {
@@ -59,6 +95,72 @@ const UserProfile = () => {
     navigation.navigate("Login");
   };
 
+  // ...
+
+  const buySubscription = async () => {
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+
+      if (token) {
+        const config = {
+          headers: {
+            access_token: token,
+          },
+        };
+
+        // Step 1: Get Midtrans Token from your server using GET request
+        const { data } = await axios.get(`${BASE_URL}/midtrans`, config);
+        const { redirect_url } = data;
+        setSubProcess({
+          ...subProcess,
+          pending: true,
+          redirect_url,
+        });
+
+        // Step 2: Process Payment using the obtained midtransToken
+        // const paymentResult = await MidtransPayment.startPayment({
+        //   clientKey: "SB-Mid-server-_8c1DQYqomT2roIxrzfzMs68",
+        //   baseUrl:
+        //     "https://app.sandbox.midtrans.com/snap/v3/redirection/9e9b8696-28df-4691-85ed-12d278934b18",
+        //   snapToken: midtransToken.token, // Use the token property from the response
+        // });
+
+        // if (paymentResult) {
+        //   // Step 3: Update User's Subscription Status using PATCH request
+        //   const updateSubscriptionResponse = await axios.patch(
+        //     `${BASE_URL}/subscriptions/createSub`,
+        //     {},
+        //     config
+        //   );
+
+        //   if (updateSubscriptionResponse.status === 200) {
+        //     // Handle the success case
+        //     console.log("Subscription purchased successfully");
+        //     setIsSubscribed(true);
+        //   } else {
+        //     // Handle the case when updating subscription status fails
+        //     console.log("Error updating subscription status");
+        //   }
+        // } else {
+        //   // Handle the case when the payment fails
+        //   console.log("Payment failed");
+        // }
+      } else {
+        // Handle the case when the token is not available in AsyncStorage
+        console.log("Token not found");
+      }
+    } catch (error) {
+      // Handle any errors that occur during the subscription purchase
+      console.log("Error purchasing subscription", error);
+    }
+  };
+  if (subProcess.pending)
+    return (
+      <WebView
+        source={{ uri: subProcess.redirect_url }}
+        style={{ marginTop: 20 }}
+      ></WebView>
+    );
   return (
     <>
       <View style={{ height: 90, width: "100%" }}>
@@ -70,7 +172,10 @@ const UserProfile = () => {
         </View>
         <View style={styles.profileContainer}>
           <View style={styles.profileCard}>
-            <View style={styles.profileImageContainer}>
+            <TouchableOpacity
+              style={styles.profileImageContainer}
+              onPress={handleProfileImagePress}
+            >
               {profilePicture ? (
                 <Image
                   source={{ uri: profilePicture }}
@@ -79,7 +184,7 @@ const UserProfile = () => {
               ) : (
                 <Image source={userImage} style={styles.profileImage} />
               )}
-            </View>
+            </TouchableOpacity>
             <View style={styles.profileInfo}>
               <Text style={styles.profileName} numberOfLines={2}>
                 Bagas Tama Putra
@@ -107,7 +212,7 @@ const UserProfile = () => {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.button, styles.subscriptionButton]}
-              onPress={handleEditUser}
+              onPress={buySubscription}
             >
               <Text style={styles.buttonText}>Buy Subscription</Text>
             </TouchableOpacity>
@@ -130,7 +235,7 @@ const UserProfile = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Edit User</Text>
+            <Text style={styles.modalTitle}>Change profile picture</Text>
             <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={() => setModalVisible(false)}
@@ -138,33 +243,107 @@ const UserProfile = () => {
               <Text style={styles.modalCloseButtonText}>Close</Text>
             </TouchableOpacity>
             <View style={styles.modalForm}>
-              <Text style={styles.modalLabel}>Username:</Text>
-              <TextInput
-                style={styles.modalInput}
-                value={newUsername}
-                onChangeText={setNewUsername}
-              />
-              <View style={styles.selectContainer}>
+              <View style={styles.modalLabelContainer}>
                 <Text style={styles.modalLabel}>Profile Picture:</Text>
-                <View style={styles.selectInput}>
-                  {brands[0]?.map((brand) => (
-                    <TouchableOpacity
-                      style={[
-                        styles.logoOption,
-                        selectedLogo === brand.id && styles.logoSelected,
-                      ]}
-                      onPress={() => handleLogoChange(brand.id)}
-                      key={brand.id}
-                    >
-                      {selectedLogo === brand.id && (
-                        <View style={styles.logoDot} />
-                      )}
-                      <Text>{brand.name}</Text>
-                    </TouchableOpacity>
-                  ))}
+                <View style={styles.profileImageContainerAll}>
+                  <TouchableOpacity
+                    style={styles.modalProfileContainer}
+                    onPress={handleSelectProfileImage}
+                  >
+                    {profilePicture ? (
+                      <Image
+                        source={{ uri: profilePicture }}
+                        style={styles.modalProfileImage}
+                      />
+                    ) : (
+                      <Image
+                        source={userImage}
+                        style={styles.modalProfileImage}
+                      />
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.modalProfileContainer}
+                    onPress={handleSelectProfileImage}
+                  >
+                    {profilePicture ? (
+                      <Image
+                        source={{ uri: profilePicture }}
+                        style={styles.modalProfileImage}
+                      />
+                    ) : (
+                      <Image
+                        source={userImage}
+                        style={styles.modalProfileImage}
+                      />
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.modalProfileContainer}
+                    onPress={handleSelectProfileImage}
+                  >
+                    {profilePicture ? (
+                      <Image
+                        source={{ uri: profilePicture }}
+                        style={styles.modalProfileImage}
+                      />
+                    ) : (
+                      <Image
+                        source={userImage}
+                        style={styles.modalProfileImage}
+                      />
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.modalProfileContainer}
+                    onPress={handleSelectProfileImage}
+                  >
+                    {profilePicture ? (
+                      <Image
+                        source={{ uri: profilePicture }}
+                        style={styles.modalProfileImage}
+                      />
+                    ) : (
+                      <Image
+                        source={userImage}
+                        style={styles.modalProfileImage}
+                      />
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.modalProfileContainer}
+                    onPress={handleSelectProfileImage}
+                  >
+                    {profilePicture ? (
+                      <Image
+                        source={{ uri: profilePicture }}
+                        style={styles.modalProfileImage}
+                      />
+                    ) : (
+                      <Image
+                        source={userImage}
+                        style={styles.modalProfileImage}
+                      />
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.modalProfileContainer}
+                    onPress={handleSelectProfileImage}
+                  >
+                    {profilePicture ? (
+                      <Image
+                        source={{ uri: profilePicture }}
+                        style={styles.modalProfileImage}
+                      />
+                    ) : (
+                      <Image
+                        source={userImage}
+                        style={styles.modalProfileImage}
+                      />
+                    )}
+                  </TouchableOpacity>
                 </View>
               </View>
-
               <TouchableOpacity
                 style={styles.modalSaveButton}
                 onPress={handleSaveUser}
@@ -275,7 +454,7 @@ const styles = StyleSheet.create({
   },
   buttonLogOutText: {
     color: "gray",
-    fontWeight: 800,
+    fontWeight: "bold",
     fontSize: 16,
   },
   modalContainer: {
@@ -300,26 +479,39 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   modalCloseButtonText: {
-    color: "#1877F2",
+    color: "red",
     fontSize: 16,
     fontWeight: "bold",
   },
   modalForm: {
     marginTop: 20,
   },
+  modalLabelContainer: {
+    marginBottom: 20,
+    flexDirection: "column",
+    alignItems: "center",
+  },
   modalLabel: {
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginRight: 10,
   },
-  modalInput: {
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 20,
+  profileImageContainerAll: {
+    marginTop: 10,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
-
+  modalProfileContainer: {
+    borderRadius: 100,
+    overflow: "hidden",
+    borderWidth: 3,
+    borderColor: "#1877F2",
+  },
+  modalProfileImage: {
+    width: 80,
+    height: 80,
+  },
   modalSaveButton: {
     backgroundColor: "#1877F2",
     borderRadius: 15,
@@ -330,37 +522,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
-  },
-  selectContainer: {
-    marginBottom: 20,
-  },
-  selectLabel: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  selectInput: {
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 10,
-    padding: 10,
-  },
-  logoOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 5,
-  },
-  logoSelected: {
-    borderRadius: 4,
-    backgroundColor: "#1877F2",
-    marginRight: 10,
-  },
-  logoDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#1877F2",
-    marginRight: 10,
   },
 });
 
