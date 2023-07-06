@@ -78,6 +78,14 @@ function HomeScreen() {
   const [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
+  const ratingMap = {
+		5: "★★★★★",
+		4: "★★★★",
+		3: "★★★",
+		2: "★★",
+		1: "★",
+		0: "No rating yet"
+	};
 
   if (!fontsLoaded) {
     return null;
@@ -182,7 +190,7 @@ function HomeScreen() {
                   />
                   <View style={styles.cardContent}>
                     <Text style={styles.cardText}>{recommendation.name}</Text>
-                    <Text style={styles.cardText}>☆☆☆☆☆</Text>
+                    <Text style={[styles.cardText, {color:"orange"}]}>{ratingMap[Math.floor(recommendation.rating)]}</Text>
                   </View>
                 </View>
               </TouchableOpacity>

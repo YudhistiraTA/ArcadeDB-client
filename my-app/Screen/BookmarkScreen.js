@@ -48,13 +48,13 @@ const BookmarkList = () => {
     return null;
   }
   const ratingMap = {
-    5: "☆☆☆☆☆",
-    4: "☆☆☆☆",
-    3: "☆☆☆",
-    2: "☆☆",
-    1: "☆",
-    0: "No rating yet",
-  }
+		5: "★★★★★",
+		4: "★★★★",
+		3: "★★★",
+		2: "★★",
+		1: "★",
+		0: "No rating yet"
+	};
 
   return (
     <>
@@ -71,7 +71,7 @@ const BookmarkList = () => {
               <Image source={{ uri: item.Arcade.Brand.imageUrl }} style={styles.cardImage} />
               <View style={styles.cardContent}>
                 <Text style={styles.cardText}>{item.Arcade.name}</Text>
-                <Text style={styles.cardText}>{ratingMap[Math.floor(item.Arcade.rating)]}</Text>
+                <Text style={[styles.cardText, {color:"orange"}]}>{ratingMap[Math.floor(item.Arcade.rating)]}</Text>
               </View>
             </View>
           )}
