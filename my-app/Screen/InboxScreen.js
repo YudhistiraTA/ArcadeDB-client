@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import HeaderAD from "../components/header";
 import { PressStart2P_400Regular } from "@expo-google-fonts/press-start-2p";
 import { BASE_URL } from "../config/api";
@@ -23,8 +23,7 @@ const InboxScreen = () => {
   });
   const [userId, setUserId] = useState("");
   const navigation = useNavigation();
-
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     const fetchData = async () => {
       try {
         const token = await AsyncStorage.getItem("access_token");
@@ -39,7 +38,23 @@ const InboxScreen = () => {
     };
 
     fetchData();
-  }, []);
+  }, []))
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("access_token");
+  //       const response = await fetchInbox(token);
+  //       setMessages(response.messages);
+  //       const usersData = await fetchUser();
+  //       setUsers(usersData);
+  //       setUserId(await AsyncStorage.getItem("id"));
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   const fetchUser = async () => {
     try {
