@@ -15,13 +15,13 @@ import axios from "axios";
 import { BASE_URL } from "../config/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const FollowerList = () => {
+const FollowerList = ({route}) => {
   const [followers, setFollowers] = useState([]);
-
+  const {id} = route.params
   const fetchFollowers = async () => {
     try {
       const token = await AsyncStorage.getItem("access_token");
-      const response = await axios.get(`${BASE_URL}/follower`, {
+      const response = await axios.get(`${BASE_URL}/follower/${id}`, {
         headers: {
           access_token: token,
         },

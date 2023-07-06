@@ -13,8 +13,8 @@ import axios from "axios";
 import { BASE_URL } from "../config/api";
 const OtherProfile = () => {
 	const navigation = useNavigation();
-	const handlePage = (page) => {
-		navigation.navigate(page);
+	const handlePage = (page, id) => {
+		navigation.navigate(page, {id});
 	};
 	const route = useRoute();
 	const [userData, setUserData] = useState({}); // Tambah state userData
@@ -119,7 +119,7 @@ const OtherProfile = () => {
 							<View style={styles.statsContainer}>
 								<TouchableOpacity
 									style={styles.stat}
-									onPress={() => handlePage("Follower")}
+									onPress={() => handlePage("Follower", userData.id)}
 								>
 									<Text style={styles.statValue}>
 										{userData.followerCount}
@@ -130,7 +130,7 @@ const OtherProfile = () => {
 								</TouchableOpacity>
 								<TouchableOpacity
 									style={styles.stat}
-									onPress={() => handlePage("Following")}
+									onPress={() => handlePage("Following", userData.id)}
 								>
 									<Text style={styles.statValue}>
 										{userData.followingCount}

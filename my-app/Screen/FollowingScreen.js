@@ -14,13 +14,14 @@ import HeaderAD from "../components/header";
 import axios from "axios";
 import { BASE_URL } from "../config/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const FollowingList = () => {
+const FollowingList = ({route}) => {
   const [following, setFollowing] = useState([]);
-
-  const fetchFollowing = async () => {
+  const {id} = route.params
+  
+  const fetchFollowing = async (id) => {
     try {
       const token = await AsyncStorage.getItem("access_token");
-      const response = await axios.get(`${BASE_URL}/following`, {
+      const response = await axios.get(`${BASE_URL}/following/${id}`, {
         headers: {
           access_token: token,
         },
@@ -34,7 +35,8 @@ const FollowingList = () => {
   };
 
   useEffect(() => {
-    fetchFollowing();
+    console.log(id);
+    fetchFollowing(id);
   }, []);
 
   const [fontsLoaded] = useFonts({
@@ -51,7 +53,7 @@ const FollowingList = () => {
     <>
       <View style={styles.container}>
         <ScrollView>
-          <Text style={styles.title}>Your Followers</Text>
+          <Text style={styles.title}>You are following</Text>
           {following?.map((follower, index) => (
             <TouchableOpacity key={index} activeOpacity={0.6}>
               <View style={styles.followerContainer}>

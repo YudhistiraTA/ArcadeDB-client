@@ -50,7 +50,7 @@ const UserProfile = () => {
       console.log(data, "aman");
       setPremium(data.premium);
       setUser(data);
-      await setProfilePicture(data.ProfilePicture);
+      await setProfilePicture(data.ProfilePicture.imageUrl);
     };
     handleFetchUser();
   }, []);
@@ -62,8 +62,8 @@ const UserProfile = () => {
       });
     }, [])
   );
-  const handlePage = (page) => {
-    navigation.navigate(page);
+  const handlePage = (page, id) => {
+    navigation.navigate(page, {id});
   };
 
   const handleEditUser = () => {
@@ -181,14 +181,14 @@ const UserProfile = () => {
               <View style={styles.statsContainer}>
                 <TouchableOpacity
                   style={styles.stat}
-                  onPress={() => handlePage("Follower")}
+                  onPress={() => handlePage("Follower", user.id)}
                 >
                   <Text style={styles.statValue}>{user.followerCount}</Text>
                   <Text style={styles.statLabel}>Followers</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.stat}
-                  onPress={() => handlePage("Following")}
+                  onPress={() => handlePage("Following", user.id)}
                 >
                   <Text style={styles.statValue}>{user.followingCount}</Text>
                   <Text style={styles.statLabel}>Following</Text>
