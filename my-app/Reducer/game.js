@@ -32,7 +32,7 @@ export const fetchArcade = createAsyncThunk("games/fetchArcade", async () => {
     const userLocationData = await phoneLocation();
     console.log(userLocationData);
     const { data } = await axios.get(
-      `${BASE_URL}/arcades?lat=${userLocationData.userLat}&lng=${userLocationData.userLong}`
+      `${BASE_URL}/main?lat=${userLocationData.userLat}&lng=${userLocationData.userLong}`
     );
     return data;
   } catch (error) {

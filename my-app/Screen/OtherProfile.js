@@ -29,7 +29,6 @@ const OtherProfile = () => {
       });
       setUserData(response.data);
       await setProfilePicture(response.data.ProfilePicture);
-      console.log(response.data, "iiasd");
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -43,6 +42,7 @@ const OtherProfile = () => {
       });
       console.log(response.data); // Outputkan respons dari server
       // Lakukan tindakan lain setelah mengikuti pengguna
+      fetchUserData();
     } catch (error) {
       console.error("Error following user:", error);
     }
