@@ -47,6 +47,14 @@ const BookmarkList = () => {
   if (!fontsLoaded) {
     return null;
   }
+  const ratingMap = {
+    5: "☆☆☆☆☆",
+    4: "☆☆☆☆",
+    3: "☆☆☆",
+    2: "☆☆",
+    1: "☆",
+    0: "No rating yet",
+  }
 
   return (
     <>
@@ -60,10 +68,10 @@ const BookmarkList = () => {
           keyExtractor={(item) => item.Arcade.id.toString()}
           renderItem={({ item }) => (
             <View style={[styles.card, { marginBottom: 30 }]}>
-              <Image source={arcadeImage} style={styles.cardImage} />
+              <Image source={{ uri: item.Arcade.Brand.imageUrl }} style={styles.cardImage} />
               <View style={styles.cardContent}>
                 <Text style={styles.cardText}>{item.Arcade.name}</Text>
-                <Text style={styles.cardText}>☆☆☆☆☆</Text>
+                <Text style={styles.cardText}>{ratingMap[Math.floor(item.Arcade.rating)]}</Text>
               </View>
             </View>
           )}
